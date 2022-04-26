@@ -1,0 +1,421 @@
+{
+  "anims": [
+    {
+      "key": "idle",
+      "type": "frame",
+      "frames": [
+        {
+          "key": "player",
+          "frame": 12,
+          "duration": 500
+        }
+      ],
+
+      "frameRate": 25,
+      "duration": 0,
+      "skipMissedFrames": true,
+      "delay": 0,
+      "repeat": -1,
+      "repeatDelay": 0,
+      "yoyo": false,
+      "showOnStart": false,
+      "hideOnComplete": false
+    },
+
+    {
+      "key": "rest",
+      "type": "frame",
+      "frames": [
+        {
+          "key": "player",
+          "frame": 13,
+          "duration": 300
+        }
+      ],
+
+      "frameRate": 25,
+      "duration": 0,
+      "skipMissedFrames": true,
+      "delay": 0,
+      "repeat": 0,
+      "repeatDelay": 0,
+      "yoyo": false,
+      "showOnStart": false,
+      "hideOnComplete": false
+    },
+
+    {
+      "key": "smoke",
+      "type": "frame",
+      "frames": [
+        {
+          "key": "player",
+          "frame": 0,
+          "duration": 500
+        },
+        {
+          "key": "player",
+          "frame": 1,
+          "duration": 500
+        },
+        {
+          "key": "player",
+          "frame": 2,
+          "duration": 5000
+        },
+        {
+          "key": "player",
+          "frame": 1,
+          "duration": 500
+        },
+        {
+          "key": "player",
+          "frame": 0,
+          "duration": 500
+        },
+        {
+          "key": "player",
+          "frame": 3,
+          "duration": 100
+        },
+        {
+          "key": "player",
+          "frame": 4,
+          "duration": 100
+        },
+        {
+          "key": "player",
+          "frame": 5,
+          "duration": 100
+        }
+      ],
+
+      "frameRate": 25,
+      "duration": 0,
+      "skipMissedFrames": true,
+      "delay": 0,
+      "repeat": -1,
+      "repeatDelay": 0,
+      "yoyo": false,
+      "showOnStart": false,
+      "hideOnComplete": false
+    },
+
+    {
+      "key": "walk-r",
+      "type": "frame",
+      "frames": [
+        {
+          "key": "player",
+          "frame": 18,
+          "duration": 100
+        },
+        {
+          "key": "player",
+          "frame": 19,
+          "duration": 250
+        },
+        {
+          "key": "player",
+          "frame": 18,
+          "duration": 100
+        },
+        {
+          "key": "player",
+          "frame": 20,
+          "duration": 250
+        },
+        {
+          "key": "player",
+          "frame": 18,
+          "duration": 100
+        }
+      ],
+
+      "frameRate": 25,
+      "duration": 0,
+      "skipMissedFrames": true,
+      "delay": 0,
+      "repeat": 0,
+      "repeatDelay": 0,
+      "yoyo": false,
+      "showOnStart": false,
+      "hideOnComplete": false
+    },
+
+    {
+      "key": "walk-l",
+      "type": "frame",
+      "frames": [
+        {
+          "key": "player",
+          "frame": 23,
+          "duration": 100
+        },
+        {
+          "key": "player",
+          "frame": 22,
+          "duration": 250
+        },
+        {
+          "key": "player",
+          "frame": 23,
+          "duration": 100
+        },
+        {
+          "key": "player",
+          "frame": 21,
+          "duration": 250
+        },
+        {
+          "key": "player",
+          "frame": 23,
+          "duration": 100
+        }
+      ],
+
+      "frameRate": 25,
+      "duration": 0,
+      "skipMissedFrames": true,
+      "delay": 0,
+      "repeat": 0,
+      "repeatDelay": 0,
+      "yoyo": false,
+      "showOnStart": false,
+      "hideOnComplete": false
+    },
+
+    {
+      "key": "walk-u",
+      "type": "frame",
+      "frames": [
+        {
+          "key": "player",
+          "frame": 10,
+          "duration": 250
+        },
+        {
+          "key": "player",
+          "frame": 11,
+          "duration": 250
+        },
+        {
+          "key": "player",
+          "frame": 9,
+          "duration": 0
+        }
+      ],
+
+      "frameRate": 25,
+      "duration": 0,
+      "skipMissedFrames": true,
+      "delay": 0,
+      "repeat": 0,
+      "repeatDelay": 0,
+      "yoyo": false,
+      "showOnStart": false,
+      "hideOnComplete": false
+    },
+
+    {
+      "key": "walk-d",
+      "type": "frame",
+      "frames": [
+        {
+          "key": "player",
+          "frame": 7,
+          "duration": 250
+        },
+        {
+          "key": "player",
+          "frame": 8,
+          "duration": 250
+        },
+        {
+          "key": "player",
+          "frame": 6,
+          "duration": 0
+        }
+      ],
+
+      "frameRate": 25,
+      "duration": 0,
+      "skipMissedFrames": true,
+      "delay": 0,
+      "repeat": 0,
+      "repeatDelay": 0,
+      "yoyo": false,
+      "showOnStart": false,
+      "hideOnComplete": false
+    },
+
+    {
+      "key": "push-r",
+      "type": "frame",
+      "frames": [
+        {
+          "key": "player",
+          "frame": 24,
+          "duration": 250
+        },
+        {
+          "key": "player",
+          "frame": 25,
+          "duration": 250
+        },
+        {
+          "key": "player",
+          "frame": 24,
+          "duration": 250
+        },
+        {
+          "key": "player",
+          "frame": 26,
+          "duration": 250
+        },
+        {
+          "key": "player",
+          "frame": 24,
+          "duration": 0
+        }
+      ],
+
+      "frameRate": 25,
+      "duration": 0,
+      "skipMissedFrames": true,
+      "delay": 0,
+      "repeat": 0,
+      "repeatDelay": 0,
+      "yoyo": false,
+      "showOnStart": false,
+      "hideOnComplete": false
+    },
+
+    {
+      "key": "push-l",
+      "type": "frame",
+      "frames": [
+        {
+          "key": "player",
+          "frame": 29,
+          "duration": 250
+        },
+        {
+          "key": "player",
+          "frame": 28,
+          "duration": 250
+        },
+        {
+          "key": "player",
+          "frame": 29,
+          "duration": 250
+        },
+        {
+          "key": "player",
+          "frame": 27,
+          "duration": 250
+        },
+        {
+          "key": "player",
+          "frame": 29,
+          "duration": 0
+        }
+      ],
+
+      "frameRate": 25,
+      "duration": 0,
+      "skipMissedFrames": true,
+      "delay": 0,
+      "repeat": 0,
+      "repeatDelay": 0,
+      "yoyo": false,
+      "showOnStart": false,
+      "hideOnComplete": false
+    },
+
+    {
+      "key": "push-u",
+      "type": "frame",
+      "frames": [
+        {
+          "key": "player",
+          "frame": 30,
+          "duration": 25
+        },
+        {
+          "key": "player",
+          "frame": 31,
+          "duration": 250
+        },
+        {
+          "key": "player",
+          "frame": 30,
+          "duration": 25
+        },
+        {
+          "key": "player",
+          "frame": 32,
+          "duration": 250
+        },
+        {
+          "key": "player",
+          "frame": 30,
+          "duration": 0
+        }
+      ],
+
+      "frameRate": 25,
+      "duration": 0,
+      "skipMissedFrames": true,
+      "delay": 0,
+      "repeat": 0,
+      "repeatDelay": 0,
+      "yoyo": false,
+      "showOnStart": false,
+      "hideOnComplete": false
+    },
+
+    {
+      "key": "push-d",
+      "type": "frame",
+      "frames": [
+        {
+          "key": "player",
+          "frame": 33,
+          "duration": 250
+        },
+        {
+          "key": "player",
+          "frame": 35,
+          "duration": 250
+        },
+        {
+          "key": "player",
+          "frame": 33,
+          "duration": 250
+        },
+        {
+          "key": "player",
+          "frame": 34,
+          "duration": 250
+        },
+        {
+          "key": "player",
+          "frame": 33,
+          "duration": 0
+        }
+      ],
+
+      "frameRate": 25,
+      "duration": 0,
+      "skipMissedFrames": true,
+      "delay": 0,
+      "repeat": 0,
+      "repeatDelay": 0,
+      "yoyo": false,
+      "showOnStart": false,
+      "hideOnComplete": false
+    }
+  ],
+  "globalTimeScale": 1
+}
