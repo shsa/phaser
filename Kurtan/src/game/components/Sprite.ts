@@ -10,6 +10,8 @@ export enum SpriteType {
 	BoxNormal,
 	BoxPlaced,
 	BoxMoney,
+
+	Out
 }
 
 export const Sprite = defineComponent({

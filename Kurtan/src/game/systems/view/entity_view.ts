@@ -60,8 +60,8 @@ export default function createEntityViewSystem(scene: Phaser.Scene) {
 			return;
 		}
 
-		sprite.x = GridPosition.x[entity] * Options.tile_width;
-		sprite.y = GridPosition.y[entity] * Options.tile_height;
+		sprite.x = Options.game_offset_x + GridPosition.x[entity] * Options.tile_width;
+		sprite.y = Options.game_offset_y + GridPosition.y[entity] * Options.tile_height;
 
 		switch (Sprite.type[entity]) {
 			case SpriteType.BoxNormal:
@@ -91,7 +91,9 @@ export default function createEntityViewSystem(scene: Phaser.Scene) {
 
 		const entitiesExited = spriteQueryExit(world);
 		for (let i = 0; i < entitiesExited.length; ++i) {
-			const id = entitiesEntered[i];
+			const id = entitiesExited[i];
+			const sprite = spritesById.get(id);
+			sprite?.destroy();
 			spritesById.delete(id);
 		}
 

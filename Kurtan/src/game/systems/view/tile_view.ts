@@ -3,7 +3,7 @@ import {
 	defineSystem,
 	defineQuery,
 	enterQuery,
-	exitQuery
+	exitQuery,
 } from 'bitecs';
 
 import Tile from '@/game/components/Tile';
@@ -47,13 +47,15 @@ export default function createTileViewSystem(scene: Phaser.Scene) {
 			const id = entitiesEntered[i];
 			const sprite = addSprite(Sprite.type[id]);
 			spritesById.set(id, sprite);
-			sprite.x = GridPosition.x[id] * Options.tile_width;
-			sprite.y = GridPosition.y[id] * Options.tile_height;
+			sprite.x = Options.game_offset_x + GridPosition.x[id] * Options.tile_width;
+			sprite.y = Options.game_offset_y + GridPosition.y[id] * Options.tile_height;
 		}
 
 		const entitiesExited = spriteQueryExit(world);
 		for (let i = 0; i < entitiesExited.length; ++i) {
-			const id = entitiesEntered[i];
+			const id = entitiesExited[i];
+			const sprite = spritesById.get(id);
+			sprite?.destroy();
 			spritesById.delete(id);
 		}
 

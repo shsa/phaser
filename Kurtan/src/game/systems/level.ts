@@ -1,9 +1,11 @@
 import {
 	IWorld,
+	Query,
 	defineSystem,
 	defineQuery,
 	addEntity,
 	addComponent,
+	removeComponent
 } from 'bitecs';
 
 import Level from '@/game/components/Level';
@@ -23,6 +25,8 @@ import Box from '@/game/components/Box';
 export default function createLevelSystem() {
 	const levelQuery = defineQuery([Level]);
 	const playerQuery = defineQuery([Player, GridPosition]);
+	const tileQuery = defineQuery([Tile]);
+	const entityQuery = defineQuery([Entity]);
 
 	let currentLevel: any = {};
 
@@ -60,16 +64,29 @@ export default function createLevelSystem() {
 		}
 	}
 
+	function clear(world: IWorld, query: Query<IWorld>) {
+		const entities = query(world);
+		for (let i = 0; i < entities.length; i++) {
+			const id = entities[i];
+			removeComponent(world, Sprite, id);
+        }
+    }
+
 	return defineSystem((world) => {
 		const entities = levelQuery(world);
 
 		for (let i = 0; i < entities.length; ++i) {
 			const id = entities[i];
 
-			const level = Levels[Level.index[id]];
+			const index = Level.index[id];
+			const level = Levels[index - 1];
 			if (currentLevel == level) {
 				break;
 			}
+			console.log("level", index, level);
+
+			clear(world, tileQuery);
+			clear(world, entityQuery);
 
 			const map = getMap(level);
 
@@ -123,8 +140,10 @@ export default function createLevelSystem() {
 			const player = playerQuery(world);
 			for (let i = 0; i < player.length; i++) {
 				const player_id = player[i];
-				GridPosition.x[player_id] = level.defaultStart.x;
-				GridPosition.y[player_id] = level.defaultStart.y;
+				if (GridPosition.x[player_id] == 0) {
+					GridPosition.x[player_id] = level.defaultStart.x;
+					GridPosition.y[player_id] = level.defaultStart.y;
+                }
             }
 
 

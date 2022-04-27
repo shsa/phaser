@@ -28,16 +28,16 @@ export class LevelMap {
 
 	public get(col: number, row: number): SpriteType {
 		if (col < 0) {
-			return SpriteType.Wall;
+			return SpriteType.Out;
         }
 		if (row < 0) {
-			return SpriteType.Wall;
+			return SpriteType.Out;
 		}
 		if (col >= this.width) {
-			return SpriteType.Wall;
+			return SpriteType.Out;
 		}
 		if (row >= this.height) {
-			return SpriteType.Wall;
+			return SpriteType.Out;
 		}
 
 		const value = this.background[row * this.width + col];
@@ -82,6 +82,7 @@ export class LevelMap {
 
 	public isWall(col: number, row: number): boolean {
 		switch (this.get(col, row)) {
+			case SpriteType.Out:
 			case SpriteType.Wall:
 			case SpriteType.Stone:
 				return true;
@@ -96,7 +97,11 @@ export class LevelMap {
 }
 
 export function getMap(level: any): LevelMap {
-    const map = new LevelMap();
+	if (typeof (level) == "number") {
+		level = Levels[level];
+    }
+
+	const map = new LevelMap();
 
 	for (let row = 0; row < level.map.length; row++) {
 		const line = level.map[row];

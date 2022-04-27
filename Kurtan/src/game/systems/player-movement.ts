@@ -9,16 +9,19 @@ import {
 } from 'bitecs';
 
 import Options from '@/game/Options';
+import Levels from '@/game/data/Levels';
+import Level from '@/game/components/Level';
 import Player, { PlayerStatus } from '@/game/components/Player';
 import Touchable from '@/game/components/Touchable';
 import Sprite, { SpriteType } from '@/game/components/Sprite';
 import GridPosition from '@/game/components/GridPosition';
 import Input, { Direction } from '@/game/components/Input';
-import { LevelMap, nextTween } from '@/game/helper';
+import { getMap, LevelMap, nextTween } from '@/game/helper';
 
 export default function createPlayerMovementSystem(tweens: Phaser.Tweens.TweenManager) {
 	const playerQuery = defineQuery([Player, GridPosition, Input]);
 	const touchableQuery = defineQuery([Touchable, GridPosition]);
+	const levelQuery = defineQuery([Level]);
 
 	const target = {
 		x: 0,
@@ -127,6 +130,21 @@ export default function createPlayerMovementSystem(tweens: Phaser.Tweens.TweenMa
 		}
     }
 
+	function nextMapIndex(level: any, action: PlayerStatus): number {
+		switch (action) {
+			case PlayerStatus.Walk_L:
+				return level.neighbours[0];
+			case PlayerStatus.Walk_U:
+				return level.neighbours[1];
+			case PlayerStatus.Walk_R:
+				return level.neighbours[2];
+			case PlayerStatus.Walk_D:
+				return level.neighbours[3];
+			default:
+				return 0;
+        }
+    }
+
 	function moveTo(world: IWorld, player: number, action: PlayerStatus) {
 		if (tween?.isPlaying() ?? false) {
 			return;
@@ -152,6 +170,38 @@ export default function createPlayerMovementSystem(tweens: Phaser.Tweens.TweenMa
 				setPushStatus(player, action);
 			}
 		}
+		else if (next1 == SpriteType.Out)
+		{
+			const entities = levelQuery(world);
+			for (let i = 0; i < entities.length; i++) {
+				const id = entities[i];
+				const index = Level.index[id];
+				const level = Levels[index - 1];
+				const new_index = nextMapIndex(level, action);
+				Level.index[id] = new_index;
+			}
+
+			switch (action) {
+				case PlayerStatus.Walk_L:
+					GridPosition.x[player] = 0;
+					break;
+				case PlayerStatus.Walk_R:
+					GridPosition.x[player] = 24;
+					break;
+				case PlayerStatus.Walk_U:
+					GridPosition.x[player] = 15;
+					break;
+				case PlayerStatus.Walk_D:
+					GridPosition.x[player] = 0;
+					break;
+            }
+
+			if (tween) {
+				tween.remove();
+				tween = null;
+			}
+
+        }
 		else {
 			updateTween(player, action);
 			Player.status[player] = action;

@@ -1,6 +1,6 @@
 const Levels = [
 	{
-		"index": 0,
+		"index": 1,
 		"neighbours": [0, 0, 7, 2],
 		"defaultStart": {
 			"x": 24,
@@ -29,7 +29,7 @@ const Levels = [
 		],
 	},
 	{
-		"index": 1,
+		"index": 2,
 		"neighbours": [0, 1, 8, 3],
 		"defaultStart": {
 			"x": 9,
@@ -58,7 +58,7 @@ const Levels = [
 		],
 	},
 	{
-		"index": 2,
+		"index": 3,
 		"neighbours": [0, 2, 9, 4],
 		"defaultStart": {
 			"x": 12,
@@ -87,7 +87,7 @@ const Levels = [
 		],
 	},
 	{
-		"index": 3,
+		"index": 4,
 		"neighbours": [0, 3, 10, 5],
 		"defaultStart": {
 			"x": 10,
@@ -116,7 +116,7 @@ const Levels = [
 		],
 	},
 	{
-		"index": 4,
+		"index": 5,
 		"neighbours": [0, 4, 11, 6],
 		"defaultStart": {
 			"x": 12,
@@ -145,7 +145,7 @@ const Levels = [
 		],
 	},
 	{
-		"index": 5,
+		"index": 6,
 		"neighbours": [0, 5, 12, 0],
 		"defaultStart": {
 			"x": 24,
@@ -174,7 +174,7 @@ const Levels = [
 		],
 	},
 	{
-		"index": 6,
+		"index": 7,
 		"neighbours": [1, 0, 13, 8],
 		"defaultStart": {
 			"x": 24,
@@ -203,7 +203,7 @@ const Levels = [
 		],
 	},
 	{
-		"index": 7,
+		"index": 8,
 		"neighbours": [2, 7, 14, 9],
 		"defaultStart": {
 			"x": 24,
@@ -232,7 +232,7 @@ const Levels = [
 		],
 	},
 	{
-		"index": 8,
+		"index": 9,
 		"neighbours": [3, 8, 15, 10],
 		"defaultStart": {
 			"x": 7,
@@ -261,7 +261,7 @@ const Levels = [
 		],
 	},
 	{
-		"index": 9,
+		"index": 10,
 		"neighbours": [4, 9, 16, 11],
 		"defaultStart": {
 			"x": 12,
@@ -290,7 +290,7 @@ const Levels = [
 		],
 	},
 	{
-		"index": 10,
+		"index": 11,
 		"neighbours": [5, 10, 17, 12],
 		"defaultStart": {
 			"x": 0,
@@ -319,7 +319,7 @@ const Levels = [
 		],
 	},
 	{
-		"index": 11,
+		"index": 12,
 		"neighbours": [6, 11, 18, 0],
 		"defaultStart": {
 			"x": 24,
@@ -348,7 +348,7 @@ const Levels = [
 		],
 	},
 	{
-		"index": 12,
+		"index": 13,
 		"neighbours": [7, 0, 19, 14],
 		"defaultStart": {
 			"x": 24,
@@ -377,7 +377,7 @@ const Levels = [
 		],
 	},
 	{
-		"index": 13,
+		"index": 14,
 		"neighbours": [8, 13, 20, 15],
 		"defaultStart": {
 			"x": 0,
@@ -406,7 +406,7 @@ const Levels = [
 		],
 	},
 	{
-		"index": 14,
+		"index": 15,
 		"neighbours": [9, 14, 21, 16],
 		"defaultStart": {
 			"x": 0,
@@ -435,7 +435,7 @@ const Levels = [
 		],
 	},
 	{
-		"index": 15,
+		"index": 16,
 		"neighbours": [10, 15, 22, 17],
 		"defaultStart": {
 			"x": 13,
@@ -464,7 +464,7 @@ const Levels = [
 		],
 	},
 	{
-		"index": 16,
+		"index": 17,
 		"neighbours": [11, 16, 23, 18],
 		"defaultStart": {
 			"x": 9,
@@ -493,7 +493,7 @@ const Levels = [
 		],
 	},
 	{
-		"index": 17,
+		"index": 18,
 		"neighbours": [12, 17, 24, 0],
 		"defaultStart": {
 			"x": 7,
@@ -522,7 +522,7 @@ const Levels = [
 		],
 	},
 	{
-		"index": 18,
+		"index": 19,
 		"neighbours": [13, 0, 25, 20],
 		"defaultStart": {
 			"x": 24,
@@ -551,7 +551,7 @@ const Levels = [
 		],
 	},
 	{
-		"index": 19,
+		"index": 20,
 		"neighbours": [14, 19, 26, 21],
 		"defaultStart": {
 			"x": 24,
@@ -580,7 +580,7 @@ const Levels = [
 		],
 	},
 	{
-		"index": 20,
+		"index": 21,
 		"neighbours": [15, 20, 27, 22],
 		"defaultStart": {
 			"x": 0,
@@ -609,7 +609,7 @@ const Levels = [
 		],
 	},
 	{
-		"index": 21,
+		"index": 22,
 		"neighbours": [16, 21, 28, 23],
 		"defaultStart": {
 			"x": 0,
@@ -638,7 +638,7 @@ const Levels = [
 		],
 	},
 	{
-		"index": 22,
+		"index": 23,
 		"neighbours": [17, 22, 29, 24],
 		"defaultStart": {
 			"x": 7,
@@ -667,7 +667,7 @@ const Levels = [
 		],
 	},
 	{
-		"index": 23,
+		"index": 24,
 		"neighbours": [18, 23, 30, 0],
 		"defaultStart": {
 			"x": 11,
@@ -696,7 +696,7 @@ const Levels = [
 		],
 	},
 	{
-		"index": 24,
+		"index": 25,
 		"neighbours": [19, 0, 31, 26],
 		"defaultStart": {
 			"x": 24,
@@ -725,7 +725,7 @@ const Levels = [
 		],
 	},
 	{
-		"index": 25,
+		"index": 26,
 		"neighbours": [20, 25, 32, 27],
 		"defaultStart": {
 			"x": 0,
@@ -754,7 +754,7 @@ const Levels = [
 		],
 	},
 	{
-		"index": 26,
+		"index": 27,
 		"neighbours": [21, 26, 33, 28],
 		"defaultStart": {
 			"x": 0,
@@ -783,7 +783,7 @@ const Levels = [
 		],
 	},
 	{
-		"index": 27,
+		"index": 28,
 		"neighbours": [22, 27, 34, 29],
 		"defaultStart": {
 			"x": 9,
@@ -812,7 +812,7 @@ const Levels = [
 		],
 	},
 	{
-		"index": 28,
+		"index": 29,
 		"neighbours": [23, 28, 35, 30],
 		"defaultStart": {
 			"x": 8,
@@ -841,7 +841,7 @@ const Levels = [
 		],
 	},
 	{
-		"index": 29,
+		"index": 30,
 		"neighbours": [24, 29, 36, 0],
 		"defaultStart": {
 			"x": 0,
@@ -870,7 +870,7 @@ const Levels = [
 		],
 	},
 	{
-		"index": 30,
+		"index": 31,
 		"neighbours": [25, 0, 0, 32],
 		"defaultStart": {
 			"x": 14,
@@ -899,7 +899,7 @@ const Levels = [
 		],
 	},
 	{
-		"index": 31,
+		"index": 32,
 		"neighbours": [26, 31, 0, 33],
 		"defaultStart": {
 			"x": 0,
@@ -928,7 +928,7 @@ const Levels = [
 		],
 	},
 	{
-		"index": 32,
+		"index": 33,
 		"neighbours": [27, 32, 0, 34],
 		"defaultStart": {
 			"x": 0,
@@ -957,7 +957,7 @@ const Levels = [
 		],
 	},
 	{
-		"index": 33,
+		"index": 34,
 		"neighbours": [28, 33, 0, 35],
 		"defaultStart": {
 			"x": 0,
@@ -986,7 +986,7 @@ const Levels = [
 		],
 	},
 	{
-		"index": 34,
+		"index": 35,
 		"neighbours": [29, 34, 0, 36],
 		"defaultStart": {
 			"x": 9,
@@ -1015,7 +1015,7 @@ const Levels = [
 		],
 	},
 	{
-		"index": 35,
+		"index": 36,
 		"neighbours": [30, 35, 0, 0],
 		"defaultStart": {
 			"x": 3,

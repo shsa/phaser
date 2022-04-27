@@ -79,12 +79,12 @@ export default class Game extends Phaser.Scene {
         addComponent(this.world, Input, player_id)
 
         Player.status[player_id] = PlayerStatus.Idle;
-        GridPosition.x[player_id] = 10;
-        GridPosition.y[player_id] = 10;
+        GridPosition.x[player_id] = 0;
+        GridPosition.y[player_id] = 0;
 
         const level = addEntity(this.world);
         addComponent(this.world, Level, level);
-        Level.index[level] = 17;
+        Level.index[level] = 18;
 
         // create the systems
         this.levelSystem = createLevelSystem();

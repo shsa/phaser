@@ -103,8 +103,8 @@ export default function createPlayerViewSystem(scene: Phaser.Scene) {
 					break;
 			}
 
-			sprite.x = GridPosition.x[id] * Options.tile_width;
-			sprite.y = GridPosition.y[id] * Options.tile_height;
+			sprite.x = Options.game_offset_x + GridPosition.x[id] * Options.tile_width;
+			sprite.y = Options.game_offset_y + GridPosition.y[id] * Options.tile_height;
 		}
 
 		const entitiesExited = playerQueryExit(world);
