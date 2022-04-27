@@ -109,13 +109,13 @@ export function getMap(level: any): LevelMap {
 					map.set(col, row, SpriteType.Space);
 					break;
 				case 2:
-					map.set(col, row, SpriteType.Place);
+					map.set(col, row, SpriteType.BoxPlace);
 					break;
 				case 3:
-					map.setEntity(col, row, SpriteType.Box);
+					map.setEntity(col, row, SpriteType.BoxNormal);
 					break;
 				case 5:
-					map.setEntity(col, row, SpriteType.Box);
+					map.setEntity(col, row, SpriteType.BoxMoney);
 					break;
 				default:
 					map.set(col, row, SpriteType.Space);

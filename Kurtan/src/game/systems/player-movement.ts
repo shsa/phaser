@@ -10,7 +10,7 @@ import {
 
 import Options from '@/game/Options';
 import Player, { PlayerStatus } from '@/game/components/Player';
-import Tile from '@/game/components/Tile';
+import Touchable from '@/game/components/Touchable';
 import Sprite, { SpriteType } from '@/game/components/Sprite';
 import GridPosition from '@/game/components/GridPosition';
 import Input, { Direction } from '@/game/components/Input';
@@ -18,7 +18,7 @@ import { LevelMap, nextTween } from '@/game/helper';
 
 export default function createPlayerMovementSystem(tweens: Phaser.Tweens.TweenManager) {
 	const playerQuery = defineQuery([Player, GridPosition, Input]);
-	const tileQuery = defineQuery([Tile, Sprite, GridPosition]);
+	const touchableQuery = defineQuery([Touchable, GridPosition]);
 
 	const target = {
 		x: 0,
@@ -137,7 +137,7 @@ export default function createPlayerMovementSystem(tweens: Phaser.Tweens.TweenMa
 			updateTween(player, PlayerStatus.None);
 			setPushStatus(player, action);
 		}
-		else if (next1 == SpriteType.Box) {
+		else if (next1 == SpriteType.BoxNormal) {
 			if (getMapTile(player, action, 2) == SpriteType.Space) {
 				updateTween(player, action);
 				setPushStatus(player, action);
@@ -160,7 +160,7 @@ export default function createPlayerMovementSystem(tweens: Phaser.Tweens.TweenMa
 
 	function fillMap(world: IWorld) {
 		map.clear();
-		const tiles = tileQuery(world);
+		const tiles = touchableQuery(world);
 		for (let i = 0; i < tiles.length; i++) {
 			const tile = tiles[i];
 			const col = Math.round(GridPosition.x[tile]);
@@ -170,9 +170,10 @@ export default function createPlayerMovementSystem(tweens: Phaser.Tweens.TweenMa
 				case SpriteType.Stone:
 					map.set(col, row, SpriteType.Wall);
 					break;
-				case SpriteType.Box:
+				case SpriteType.BoxNormal:
 				case SpriteType.BoxPlaced:
-					map.set(col, row, SpriteType.Box);
+				case SpriteType.BoxMoney:
+					map.set(col, row, SpriteType.BoxNormal);
 					map.setTag(col, row, tile);
             }
 		}

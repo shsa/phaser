@@ -25,24 +25,14 @@ export default function createTileViewSystem(scene: Phaser.Scene) {
 		return result;
     }
 
-	function addEntity(key: string): Phaser.GameObjects.Sprite {
-		const result = scene.add.sprite(0, 0, key);
-		result.setDepth(5);
-		return result;
-	}
-
 	function addSprite(type: SpriteType): Phaser.GameObjects.Sprite {
 		switch (type) {
 			case SpriteType.Wall:
 				return addTile("wall");
 			case SpriteType.Stone:
 				return addTile("stone");
-			case SpriteType.Place:
+			case SpriteType.BoxPlace:
 				return addTile("place");
-			case SpriteType.Box:
-				return addEntity("box");
-			case SpriteType.BoxPlaced:
-				return addEntity("box_placed");
 			case SpriteType.Space:
 				return addTile("space");
 			default:
@@ -57,18 +47,6 @@ export default function createTileViewSystem(scene: Phaser.Scene) {
 			const id = entitiesEntered[i];
 			const sprite = addSprite(Sprite.type[id]);
 			spritesById.set(id, sprite);
-		}
-
-		const entities = spriteQuery(world);
-		for (let i = 0; i < entities.length; ++i) {
-			const id = entities[i];
-
-			const sprite = spritesById.get(id);
-			if (!sprite) {
-				// log an error
-				continue;
-			}
-
 			sprite.x = GridPosition.x[id] * Options.tile_width;
 			sprite.y = GridPosition.y[id] * Options.tile_height;
 		}

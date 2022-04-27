@@ -1,22 +1,23 @@
 import Phaser from 'phaser';
 import {
+	IWorld,
 	defineSystem,
 	defineQuery,
-	enterQuery,
 	removeComponent,
-    IWorld,
 } from 'bitecs';
 
 import Options from '@/game/Options';
-import Player, { PlayerStatus } from '@/game/components/Player';
-import Tile from '@/game/components/Tile';
-import Sprite, { SpriteType } from '@/game/components/Sprite';
+import Entity from '@/game/components/Entity';
 import GridPosition from '@/game/components/GridPosition';
+import Sprite, { SpriteType } from '@/game/components/Sprite';
 import Input, { Direction } from '@/game/components/Input';
-import { LevelMap, nextTween } from '@/game/helper';
+import { nextTween } from '@/game/helper';
+import BoxPlace from '@/game/components/BoxPlace';
+import Box from '@/game/components/Box';
 
-export default function createTileMovementSystem(tweens: Phaser.Tweens.TweenManager) {
-	const tileQuery = defineQuery([Tile, Input, GridPosition]);
+export default function createEntityMovementSystem(tweens: Phaser.Tweens.TweenManager) {
+	const entityQuery = defineQuery([Entity, Sprite, Input, GridPosition]);
+	const boxPlaceQuery = defineQuery([BoxPlace, GridPosition]);
 
 	const target = {
 		x: 0,
@@ -62,12 +63,48 @@ export default function createTileMovementSystem(tweens: Phaser.Tweens.TweenMana
 		});
     }
 
+	function isBox(entity: number): boolean {
+		switch (Sprite.type[entity]) {
+			case SpriteType.BoxNormal:
+			case SpriteType.BoxPlaced:
+			case SpriteType.BoxMoney:
+				return true;
+			default:
+				return false;
+        }
+    }
+
+	function isBoxPlaced(world: IWorld, box: number) {
+		const x = Math.round(GridPosition.x[box]);
+		const y = Math.round(GridPosition.y[box]);
+		const entities = boxPlaceQuery(world);
+		for (let i = 0; i < entities.length; i++) {
+			const place = entities[i];
+			if (GridPosition.x[place] == x && GridPosition.y[place] == y) {
+				return true;
+            }
+		}
+		return false;
+    }
+
 	return defineSystem((world) => {
-		const entities = tileQuery(world);
+		const entities = entityQuery(world);
 
 		for (let i = 0; i < entities.length; ++i)
 		{
 			const id = entities[i];
+
+			if (isBox(id)) {
+				if (isBoxPlaced(world, id)) {
+					if (Box.money[id] == 1) {
+						Sprite.type[id] = SpriteType.BoxMoney;
+					} else {
+						Sprite.type[id] = SpriteType.BoxPlaced;
+					}
+				} else {
+					Sprite.type[id] = SpriteType.BoxNormal;
+                }
+            }
 
 			if (tween?.isPlaying() ?? false) {
 				GridPosition.x[id] = target.x;
