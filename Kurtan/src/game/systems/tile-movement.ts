@@ -13,7 +13,7 @@ import Tile from '@/game/components/Tile';
 import Sprite, { SpriteType } from '@/game/components/Sprite';
 import GridPosition from '@/game/components/GridPosition';
 import Input, { Direction } from '@/game/components/Input';
-import { LevelMap } from '@/game/helper';
+import { LevelMap, nextTween } from '@/game/helper';
 
 export default function createTileMovementSystem(tweens: Phaser.Tweens.TweenManager) {
 	const tileQuery = defineQuery([Tile, Input, GridPosition]);
@@ -26,17 +26,14 @@ export default function createTileMovementSystem(tweens: Phaser.Tweens.TweenMana
 		dt: 0, // time after last action
 	};
 
-	let tween = tweens.add({
-		targets: [],
-		paused: true
-	});
+	let tween: Phaser.Tweens.Tween | null = null;
 
-	function updateTween(player: number, dir: Direction) {
-		tween.stop();
-		tween.remove();
+	function makeTween(player: number, dir: Direction) {
+		if (tween == null) {
+			target.x = GridPosition.x[player];
+			target.y = GridPosition.y[player];
+		}
 
-		target.x = GridPosition.x[player];
-		target.y = GridPosition.y[player];
 		target.next_x = target.x;
 		target.next_y = target.y;
 		switch (dir) {
@@ -54,7 +51,7 @@ export default function createTileMovementSystem(tweens: Phaser.Tweens.TweenMana
 				break;
 		}
 
-		tween = tweens.add({
+		tween = nextTween(tweens, tween, {
 			targets: target,
 			duration: Options.walk_duration,
 			x: target.next_x,
@@ -72,20 +69,23 @@ export default function createTileMovementSystem(tweens: Phaser.Tweens.TweenMana
 		{
 			const id = entities[i];
 
-			if (tween.isPlaying()) {
+			if (tween?.isPlaying() ?? false) {
 				GridPosition.x[id] = target.x;
 				GridPosition.y[id] = target.y;
-				target.dt = 0;
 			}
 			else {
 				GridPosition.x[id] = Math.round(GridPosition.x[id]);
 				GridPosition.y[id] = Math.round(GridPosition.y[id]);
 
 				if (Input.direction[id] == Direction.None) {
+					if (tween) {
+						tween.remove();
+						tween = null;
+					}
 					removeComponent(world, Input, id);
 				}
 				else {
-					updateTween(id, Input.direction[id]);
+					makeTween(id, Input.direction[id]);
 					Input.direction[id] = Direction.None;
                 }
             }

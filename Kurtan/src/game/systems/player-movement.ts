@@ -14,7 +14,7 @@ import Tile from '@/game/components/Tile';
 import Sprite, { SpriteType } from '@/game/components/Sprite';
 import GridPosition from '@/game/components/GridPosition';
 import Input, { Direction } from '@/game/components/Input';
-import { LevelMap } from '@/game/helper';
+import { LevelMap, nextTween } from '@/game/helper';
 
 export default function createPlayerMovementSystem(tweens: Phaser.Tweens.TweenManager) {
 	const playerQuery = defineQuery([Player, GridPosition, Input]);
@@ -23,46 +23,49 @@ export default function createPlayerMovementSystem(tweens: Phaser.Tweens.TweenMa
 	const target = {
 		x: 0,
 		y: 0,
-		next_x: 0,
-		next_y: 0,
+		start_x: 0,
+		start_y: 0,
+		end_x: 0,
+		end_y: 0,
+		action: PlayerStatus.None,
 		dt: 0, // time after last action
 	};
 
-	let tween = tweens.add({
-		targets: [],
-		paused: true
-	});
+	let tween: Phaser.Tweens.Tween | null = null;
 
 	const map = new LevelMap();
 
 	function updateTween(player: number, action: PlayerStatus) {
-		tween.stop();
-		tween.remove();
+		tween?.remove();
+		//console.log(tween.totalElapsed, Options.walk_duration, target.x, target.next_x);
 
-		target.x = GridPosition.x[player];
-		target.y = GridPosition.y[player];
-		target.next_x = target.x;
-		target.next_y = target.y;
-		switch (action) {
-			case PlayerStatus.Walk_L:
-				target.next_x -= 1;
-				break;
-			case PlayerStatus.Walk_R:
-				target.next_x += 1;
-				break;
-			case PlayerStatus.Walk_U:
-				target.next_y -= 1;
-				break;
-			case PlayerStatus.Walk_D:
-				target.next_y += 1;
-				break;
+		if (tween == null) {
+			target.x = GridPosition.x[player];
+			target.y = GridPosition.y[player];
 		}
 
-		tween = tweens.add({
+		target.end_x = Math.round(target.x);
+		target.end_y = Math.round(target.y);
+		switch (action) {
+			case PlayerStatus.Walk_L:
+				target.end_x -= 1;
+				break;
+			case PlayerStatus.Walk_R:
+				target.end_x += 1;
+				break;
+			case PlayerStatus.Walk_U:
+				target.end_y -= 1;
+				break;
+			case PlayerStatus.Walk_D:
+				target.end_y += 1;
+				break;
+		}
+		tween = nextTween(tweens, tween, {
 			targets: target,
 			duration: Options.walk_duration,
-			x: target.next_x,
-			y: target.next_y,
+			x: target.end_x,
+			y: target.end_y,
+			ease: Phaser.Math.Easing.Linear,
 			delay: 0,
 			repeat: 0,
 			yoyo: false
@@ -70,8 +73,8 @@ export default function createPlayerMovementSystem(tweens: Phaser.Tweens.TweenMa
     }
 
 	function getMapTile(player: number, action: PlayerStatus, offset: number): SpriteType {
-		const x = GridPosition.x[player];
-		const y = GridPosition.y[player];
+		const x = Math.round(GridPosition.x[player]);
+		const y = Math.round(GridPosition.y[player]);
 
 		switch (action) {
 			case PlayerStatus.Walk_L:
@@ -88,8 +91,8 @@ export default function createPlayerMovementSystem(tweens: Phaser.Tweens.TweenMa
     }
 
 	function getMapTag(player: number, action: PlayerStatus, offset: number): number {
-		const x = GridPosition.x[player];
-		const y = GridPosition.y[player];
+		const x = Math.round(GridPosition.x[player]);
+		const y = Math.round(GridPosition.y[player]);
 
 		switch (action) {
 			case PlayerStatus.Walk_L:
@@ -125,7 +128,7 @@ export default function createPlayerMovementSystem(tweens: Phaser.Tweens.TweenMa
     }
 
 	function moveTo(world: IWorld, player: number, action: PlayerStatus) {
-		if (tween.isPlaying()) {
+		if (tween?.isPlaying() ?? false) {
 			return;
 		}
 
@@ -183,15 +186,12 @@ export default function createPlayerMovementSystem(tweens: Phaser.Tweens.TweenMa
 		{
 			const id = entities[i];
 
-			if (tween.isPlaying()) {
+			if (tween?.isPlaying() ?? false) {
 				GridPosition.x[id] = target.x;
 				GridPosition.y[id] = target.y;
 				target.dt = 0;
 			}
 			else {
-				GridPosition.x[id] = Math.round(GridPosition.x[id]);
-				GridPosition.y[id] = Math.round(GridPosition.y[id]);
-
 				target.dt += Options.time_delta;
 
 				switch (Input.direction[id]) {
@@ -208,6 +208,14 @@ export default function createPlayerMovementSystem(tweens: Phaser.Tweens.TweenMa
 						moveTo(world, id, PlayerStatus.Walk_D);
 						break;
 					default:
+						if (tween) {
+							tween.remove();
+							tween = null;
+						}
+
+						GridPosition.x[id] = Math.round(GridPosition.x[id]);
+						GridPosition.y[id] = Math.round(GridPosition.y[id]);
+
 						if (target.dt > Options.rest_timeout) {
 							Player.status[id] = PlayerStatus.Rest;
 						}
