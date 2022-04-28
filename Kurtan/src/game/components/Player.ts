@@ -3,6 +3,8 @@ import { defineComponent, Types } from 'bitecs';
 export enum PlayerStatus {
     None,
 
+    Start,
+
     Idle,
 
     Rest,

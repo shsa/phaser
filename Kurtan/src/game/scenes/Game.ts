@@ -17,10 +17,10 @@ import Player, { PlayerStatus } from '@/game/components/Player';
 import Input from '@/game/components/Input';
 import GridPosition from '@/game/components/GridPosition';
 import Sprite from '@/game/components/Sprite';
-import Level from '@/game/components/Level';
+import Level, { LevelStatus } from '@/game/components/Level';
 
-import createLevelSystem from '@/game/systems/level';
-import createPlayerSystem from '@/game/systems/player';
+import createLevelLoaderSystem from '@/game/systems/level-loader';
+import createPlayerControllerSystem from '@/game/systems/player-controller';
 import createPlayerMovementSystem from '@/game/systems/player-movement';
 import createEntityMovementSystem from '@/game/systems/entity-movement'
 import createMovementSystem from '@/game/systems/movement';
@@ -35,8 +35,8 @@ export default class Game extends Phaser.Scene {
     private cursors!: Phaser.Types.Input.Keyboard.CursorKeys;
 
     private world!: IWorld;
-    private levelSystem!: System;
-    private playerSystem!: System;
+    private levelLoaderSystem!: System;
+    private playerControllerSystem!: System;
     private playerMovementSystem!: System;
     private entityMovementSystem!: System;
     private movementSystem!: System;
@@ -78,17 +78,16 @@ export default class Game extends Phaser.Scene {
         addComponent(this.world, GridPosition, player_id)
         addComponent(this.world, Input, player_id)
 
-        Player.status[player_id] = PlayerStatus.Idle;
-        GridPosition.x[player_id] = 0;
-        GridPosition.y[player_id] = 0;
+        Player.status[player_id] = PlayerStatus.Start;
 
         const level = addEntity(this.world);
         addComponent(this.world, Level, level);
         Level.index[level] = 18;
+        Level.status[level] = LevelStatus.Load;
 
         // create the systems
-        this.levelSystem = createLevelSystem();
-        this.playerSystem = createPlayerSystem(this.cursors);
+        this.levelLoaderSystem = createLevelLoaderSystem();
+        this.playerControllerSystem = createPlayerControllerSystem(this.cursors);
         this.playerMovementSystem = createPlayerMovementSystem(this.tweens);
         this.entityMovementSystem = createEntityMovementSystem(this.tweens);
         this.movementSystem = createMovementSystem();
@@ -103,10 +102,10 @@ export default class Game extends Phaser.Scene {
         Options.time = t;
         Options.time_delta = dt;
 
-        this.levelSystem(this.world);
+        this.levelLoaderSystem(this.world);
 
         // run each system in desired order
-        this.playerSystem(this.world);
+        this.playerControllerSystem(this.world);
 
         //this.movementSystem(this.world);
         this.entityMovementSystem(this.world);

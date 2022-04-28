@@ -183,16 +183,16 @@ export default function createPlayerMovementSystem(tweens: Phaser.Tweens.TweenMa
 
 			switch (action) {
 				case PlayerStatus.Walk_L:
-					GridPosition.x[player] = 0;
+					GridPosition.x[player] = 25;
 					break;
 				case PlayerStatus.Walk_R:
-					GridPosition.x[player] = 24;
+					GridPosition.x[player] = -1;
 					break;
 				case PlayerStatus.Walk_U:
-					GridPosition.x[player] = 15;
+					GridPosition.y[player] = 16;
 					break;
 				case PlayerStatus.Walk_D:
-					GridPosition.x[player] = 0;
+					GridPosition.y[player] = -1;
 					break;
             }
 
