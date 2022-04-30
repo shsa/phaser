@@ -9,15 +9,16 @@ import {
 import Tile from '@/game/components/Tile';
 import GridPosition from '@/game/components/GridPosition';
 import Sprite, { SpriteType } from '@/game/components/Sprite';
+import Destroy from '@/game/components/Destroy';
 import Options from '@/game/Options';
 
 export default function createTileViewSystem(scene: Phaser.Scene) {
 	const spritesById = new Map<number, Phaser.GameObjects.Sprite>();
 
 	const spriteQuery = defineQuery([Tile, GridPosition, Sprite]);
+	const destroyQuery = defineQuery([Tile, Destroy, Sprite])
 	
 	const spriteQueryEnter = enterQuery(spriteQuery);
-	const spriteQueryExit = exitQuery(spriteQuery);
 
 	function addTile(key: string): Phaser.GameObjects.Sprite {
 		const result = scene.add.sprite(0, 0, key);
@@ -41,23 +42,18 @@ export default function createTileViewSystem(scene: Phaser.Scene) {
     }
 
 	return defineSystem((world) => {
-		const entitiesEntered = spriteQueryEnter(world);
-
-		for (let i = 0; i < entitiesEntered.length; ++i) {
-			const id = entitiesEntered[i];
+		spriteQueryEnter(world).forEach(id => {
 			const sprite = addSprite(Sprite.type[id]);
 			spritesById.set(id, sprite);
 			sprite.x = Options.game_offset_x + GridPosition.x[id] * Options.tile_width;
 			sprite.y = Options.game_offset_y + GridPosition.y[id] * Options.tile_height;
-		}
+        })
 
-		const entitiesExited = spriteQueryExit(world);
-		for (let i = 0; i < entitiesExited.length; ++i) {
-			const id = entitiesExited[i];
+		destroyQuery(world).forEach(id => {
 			const sprite = spritesById.get(id);
 			sprite?.destroy();
 			spritesById.delete(id);
-		}
+		});
 
 		return world;
 	});

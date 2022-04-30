@@ -15,9 +15,9 @@ import {
 import Options from '@/game/Options';
 import Player, { PlayerStatus } from '@/game/components/Player';
 import GridPosition from '@/game/components/GridPosition';
-import Input, { Direction } from '@/game/components/Input';
+import Input, { Direction, getOffset } from '@/game/components/Input';
 import PlayDemo from '@/game/components/PlayDemo';
-import Level, { LevelStatus } from '@/game/components/Level';
+import Level from '@/game/components/Level';
 import Levels from '@/game/data/Levels';
 
 class DemoInfo {
@@ -25,22 +25,20 @@ class DemoInfo {
 	public index: number = 0;
 	public x: number = 0;
 	public y: number = 0;
+	public dir: Direction = Direction.None;
 }
 
-export default function createDemoSystem(tweens: Phaser.Tweens.TweenManager) {
-	const queryLevel = defineQuery([Level]);
-	const demoQuery = defineQuery([Player, PlayDemo]);
+export default function createDemoSystem(tweens: Phaser.Tweens.TweenManager, anims: Phaser.Animations.AnimationManager) {
+	const demoQuery = defineQuery([Player, Level, PlayDemo]);
 	const enterDemoQuery = enterQuery(demoQuery);
 	const exitDemoQuery = exitQuery(demoQuery);
 
 	const demo = new DemoInfo();
 
-	function restartLevel(world: IWorld): number[] {
-		const entities = queryLevel(world);
+	function getSteps(world: IWorld): number[] {
+		const entities = demoQuery(world);
 		for (let i = 0; i < entities.length; ++i) {
 			const id = entities[i];
-
-			Level.status[id] = LevelStatus.Load;
 
 			const level = Levels[Level.index[id] - 1];
 			return level.demo;
@@ -49,16 +47,18 @@ export default function createDemoSystem(tweens: Phaser.Tweens.TweenManager) {
     }
 
 	function startDemo(world: IWorld) {
-		const entities = enterDemoQuery(world);
-		for (let i = 0; i < entities.length; ++i) {
-			const player = entities[i];
-
-			demo.steps = restartLevel(world);
+		enterDemoQuery(world).forEach(player => {
+			demo.steps = getSteps(world);
 			demo.index = 0;
-			demo.x = Math.round(GridPosition.x[player]);
-			demo.y = Math.round(GridPosition.y[player]);
-			tweens.timeScale = 2;
-		}
+			demo.dir = getDirection(demo.steps[demo.index]);
+			const offset = getOffset(demo.dir);
+			demo.x = Math.round(GridPosition.x[player]) + offset.x;
+			demo.y = Math.round(GridPosition.y[player]) + offset.y;
+			Input.direction[player] = demo.dir;
+
+			tweens.timeScale = 4;
+			anims.globalTimeScale = 4;
+        })
     }
 
 	function endDemo(world: IWorld) {
@@ -66,7 +66,9 @@ export default function createDemoSystem(tweens: Phaser.Tweens.TweenManager) {
 		for (let i = 0; i < entities.length; i++) {
 			const player = entities[i];
 			removeComponent(world, PlayDemo, player);
+
 			tweens.timeScale = 1;
+			anims.globalTimeScale = 1;
 		}
     }
 
@@ -85,36 +87,6 @@ export default function createDemoSystem(tweens: Phaser.Tweens.TweenManager) {
 		}
     }
 
-	function getOffset(dir: Direction): any {
-		switch (dir) {
-			case Direction.Left:
-				return {
-					x: -1,
-					y: 0
-				}
-			case Direction.Right:
-				return {
-					x: 1,
-					y: 0
-				}
-			case Direction.Up:
-				return {
-					x: 0,
-					y: -1
-				}
-			case Direction.Down:
-				return {
-					x: 0,
-					y: 1
-				}
-			default:
-				return {
-					x: 0,
-					y: 0
-				}
-        }
-    }
-
 	function updateDemo(world: IWorld) {
 		const entities = demoQuery(world);
 		for (let i = 0; i < entities.length; i++) {
@@ -123,16 +95,20 @@ export default function createDemoSystem(tweens: Phaser.Tweens.TweenManager) {
 			if (demo.index < demo.steps.length) {
 				const x = Math.round(GridPosition.x[player]);
 				const y = Math.round(GridPosition.y[player]);
+				//const x = GridPosition.x[player];
+				//const y = GridPosition.y[player];
 
 				if (demo.x == x && demo.y == y) {
-					Input.direction[player] = getDirection(demo.steps[demo.index]);
+					demo.index += 1;
+					demo.dir = getDirection(demo.steps[demo.index]);
+					console.log("demo.index:", demo.index);
+					const offset = getOffset(demo.dir);
+					demo.x = x + offset.x;
+					demo.y = y + offset.y;
+					Input.direction[player] = demo.dir;
 				}
 				else {
-					demo.index += 1;
-					console.log("demo.index:", demo.index);
-					const offset = getOffset(getDirection(demo.steps[demo.index]));
-					demo.x = offset.x;
-					demo.y = offset.y;
+					Input.direction[player] = demo.dir;
 				} 
 			}
 			else {

@@ -9,19 +9,21 @@ import {
 } from 'bitecs';
 
 import Options from '@/game/Options';
+import Game from '@/game/components/Game';
 import Levels from '@/game/data/Levels';
-import Level, { LevelStatus } from '@/game/components/Level';
-import Player, { PlayerStatus } from '@/game/components/Player';
+import Level from '@/game/components/Level';
+import Player, { PlayerStatus, getDirection } from '@/game/components/Player';
 import Touchable from '@/game/components/Touchable';
 import Sprite, { SpriteType } from '@/game/components/Sprite';
 import GridPosition from '@/game/components/GridPosition';
-import Input, { Direction } from '@/game/components/Input';
-import { getMap, LevelMap, nextTween } from '@/game/helper';
+import Input, { Direction, getOffset } from '@/game/components/Input';
+import { nextTween } from '@/game/helper';
+import { LevelMap } from '@/game/data/LevelMap'
 
 export default function createPlayerMovementSystem(tweens: Phaser.Tweens.TweenManager) {
+	const gameQuery = defineQuery([Game]);
 	const playerQuery = defineQuery([Player, GridPosition, Input]);
 	const touchableQuery = defineQuery([Touchable, GridPosition]);
-	const levelQuery = defineQuery([Level]);
 
 	const target = {
 		x: 0,
@@ -31,7 +33,10 @@ export default function createPlayerMovementSystem(tweens: Phaser.Tweens.TweenMa
 		end_x: 0,
 		end_y: 0,
 		action: PlayerStatus.None,
+		dir: Direction.None,
 		dt: 0, // time after last action
+		update: false,
+		complete: false,
 	};
 
 	let tween: Phaser.Tweens.Tween | null = null;
@@ -40,29 +45,21 @@ export default function createPlayerMovementSystem(tweens: Phaser.Tweens.TweenMa
 
 	function updateTween(player: number, action: PlayerStatus) {
 		tween?.remove();
-		//console.log(tween.totalElapsed, Options.walk_duration, target.x, target.next_x);
 
-		if (tween == null) {
+		if (action != target.action) {
 			target.x = GridPosition.x[player];
 			target.y = GridPosition.y[player];
+			target.action = action;
+			tween = null;
 		}
-
 		target.end_x = Math.round(target.x);
 		target.end_y = Math.round(target.y);
-		switch (action) {
-			case PlayerStatus.Walk_L:
-				target.end_x -= 1;
-				break;
-			case PlayerStatus.Walk_R:
-				target.end_x += 1;
-				break;
-			case PlayerStatus.Walk_U:
-				target.end_y -= 1;
-				break;
-			case PlayerStatus.Walk_D:
-				target.end_y += 1;
-				break;
-		}
+
+		const dir = getDirection(action);
+		const offset = getOffset(dir);
+		target.end_x += offset.x;
+		target.end_y += offset.y;
+
 		tween = nextTween(tweens, tween, {
 			targets: target,
 			duration: Options.walk_duration,
@@ -71,8 +68,18 @@ export default function createPlayerMovementSystem(tweens: Phaser.Tweens.TweenMa
 			ease: Phaser.Math.Easing.Linear,
 			delay: 0,
 			repeat: 0,
-			yoyo: false
+			yoyo: false,
+			onComplete: function (t) {
+				target.update = false;
+				target.complete = true;
+			},
+			onUpdate: function (t) {
+				target.update = true;
+				target.complete = false;
+            }
 		});
+		GridPosition.x[player] = target.x;
+		GridPosition.y[player] = target.y;
     }
 
 	function getMapTile(player: number, action: PlayerStatus, offset: number): SpriteType {
@@ -152,8 +159,9 @@ export default function createPlayerMovementSystem(tweens: Phaser.Tweens.TweenMa
 
 		const next1 = getMapTile(player, action, 1);
 		if (next1 == SpriteType.Wall) {
-			updateTween(player, PlayerStatus.None);
+			//updateTween(player, PlayerStatus.None);
 			setPushStatus(player, action);
+			target.action = action;
 		}
 		else if (next1 == SpriteType.BoxNormal) {
 			if (getMapTile(player, action, 2) == SpriteType.Space) {
@@ -166,21 +174,20 @@ export default function createPlayerMovementSystem(tweens: Phaser.Tweens.TweenMa
 				Input.direction[tile] = Input.direction[player];
 			}
 			else {
-				updateTween(player, PlayerStatus.None);
+				//updateTween(player, PlayerStatus.None);
 				setPushStatus(player, action);
+				target.action = action;
 			}
 		}
 		else if (next1 == SpriteType.Out)
 		{
-			const entities = levelQuery(world);
-			for (let i = 0; i < entities.length; i++) {
-				const id = entities[i];
-				const index = Level.index[id];
-				const level = Levels[index - 1];
-				const new_index = nextMapIndex(level, action);
-				Level.index[id] = new_index;
-				Level.status[id] = LevelStatus.Load;
-			}
+			const level_index = Level.index[player];
+			const level = Levels[level_index - 1];
+			target.action = PlayerStatus.None;
+			gameQuery(world).forEach(game => {
+				addComponent(world, Level, game);
+				Level.index[game] = nextMapIndex(level, action);
+            })
 
 			switch (action) {
 				case PlayerStatus.Walk_L:
@@ -196,12 +203,6 @@ export default function createPlayerMovementSystem(tweens: Phaser.Tweens.TweenMa
 					GridPosition.y[player] = -1;
 					break;
             }
-
-			if (tween) {
-				tween.remove();
-				tween = null;
-			}
-
         }
 		else {
 			updateTween(player, action);
@@ -232,55 +233,52 @@ export default function createPlayerMovementSystem(tweens: Phaser.Tweens.TweenMa
 
 	return defineSystem((world) => {
 		fillMap(world);
-		const entities = playerQuery(world);
-
-		for (let i = 0; i < entities.length; ++i)
-		{
-			const id = entities[i];
+		playerQuery(world).forEach(player => {
+			if (target.update) {
+				GridPosition.x[player] = target.x;
+				GridPosition.y[player] = target.y;
+				target.update = false;
+			}
+			if (target.complete) {
+				GridPosition.x[player] = Math.round(target.x);
+				GridPosition.y[player] = Math.round(target.y);
+				target.complete = false;
+			}
 
 			if (tween?.isPlaying() ?? false) {
-				GridPosition.x[id] = target.x;
-				GridPosition.y[id] = target.y;
 				target.dt = 0;
 			}
 			else {
 				target.dt += Options.time_delta;
 
-				switch (Input.direction[id]) {
+				switch (Input.direction[player]) {
 					case Direction.Left:
-						moveTo(world, id, PlayerStatus.Walk_L);
+						moveTo(world, player, PlayerStatus.Walk_L);
 						break;
 					case Direction.Right:
-						moveTo(world, id, PlayerStatus.Walk_R);
+						moveTo(world, player, PlayerStatus.Walk_R);
 						break;
 					case Direction.Up:
-						moveTo(world, id, PlayerStatus.Walk_U);
+						moveTo(world, player, PlayerStatus.Walk_U);
 						break;
 					case Direction.Down:
-						moveTo(world, id, PlayerStatus.Walk_D);
+						moveTo(world, player, PlayerStatus.Walk_D);
 						break;
 					default:
-						if (tween) {
-							tween.remove();
-							tween = null;
-						}
-
-						GridPosition.x[id] = Math.round(GridPosition.x[id]);
-						GridPosition.y[id] = Math.round(GridPosition.y[id]);
-
 						if (target.dt > Options.rest_timeout) {
-							Player.status[id] = PlayerStatus.Rest;
+							Player.status[player] = PlayerStatus.Rest;
 						}
 						else if (target.dt > Options.idle_timeout) {
-							Player.status[id] = PlayerStatus.Idle;
+							Player.status[player] = PlayerStatus.Idle;
 						}
 						else {
-							Player.status[id] = PlayerStatus.None;
+							Player.status[player] = PlayerStatus.None;
 						}
+						target.action = Player.status[player];
 				}
-				Input.direction[id] = Direction.None;
-            }
-		}
+				Input.direction[player] = Direction.None;
+			}
+        });
 	
 		return world;
 	})

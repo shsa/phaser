@@ -1,4 +1,5 @@
 import { defineComponent, Types } from 'bitecs';
+import { Direction } from '@/game/components/Input';
 
 export enum PlayerStatus {
     None,
@@ -23,6 +24,16 @@ export enum PlayerStatus {
     Push_R,
     Push_U,
     Push_D
+}
+
+export function getDirection(status: PlayerStatus): Direction {
+    switch (status) {
+        case PlayerStatus.Walk_L: return Direction.Left;
+        case PlayerStatus.Walk_R: return Direction.Right;
+        case PlayerStatus.Walk_U: return Direction.Up;
+        case PlayerStatus.Walk_D: return Direction.Down;
+        default: return Direction.None;
+    }
 }
 
 export const Player = defineComponent({
