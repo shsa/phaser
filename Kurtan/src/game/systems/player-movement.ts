@@ -10,7 +10,7 @@ import {
 
 import Options from '@/game/Options';
 import Levels from '@/game/data/Levels';
-import Level from '@/game/components/Level';
+import Level, { LevelStatus } from '@/game/components/Level';
 import Player, { PlayerStatus } from '@/game/components/Player';
 import Touchable from '@/game/components/Touchable';
 import Sprite, { SpriteType } from '@/game/components/Sprite';
@@ -179,6 +179,7 @@ export default function createPlayerMovementSystem(tweens: Phaser.Tweens.TweenMa
 				const level = Levels[index - 1];
 				const new_index = nextMapIndex(level, action);
 				Level.index[id] = new_index;
+				Level.status[id] = LevelStatus.Load;
 			}
 
 			switch (action) {

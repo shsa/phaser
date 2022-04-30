@@ -24,6 +24,8 @@ import createPlayerControllerSystem from '@/game/systems/player-controller';
 import createPlayerMovementSystem from '@/game/systems/player-movement';
 import createEntityMovementSystem from '@/game/systems/entity-movement'
 import createMovementSystem from '@/game/systems/movement';
+import createDemoSystem from '@/game/systems/demo';
+
 
 import createTileViewSystem from '@/game/systems/view/tile_view';
 import createEntityViewSystem from '@/game/systems/view/entity_view';
@@ -40,6 +42,7 @@ export default class Game extends Phaser.Scene {
     private playerMovementSystem!: System;
     private entityMovementSystem!: System;
     private movementSystem!: System;
+    private demoSystem!: System;
 
     private tileViewSystem!: System;
     private entityViewSystem!: System;
@@ -91,6 +94,7 @@ export default class Game extends Phaser.Scene {
         this.playerMovementSystem = createPlayerMovementSystem(this.tweens);
         this.entityMovementSystem = createEntityMovementSystem(this.tweens);
         this.movementSystem = createMovementSystem();
+        this.demoSystem = createDemoSystem(this.tweens);
 
         this.tileViewSystem = createTileViewSystem(this);
         this.entityViewSystem = createEntityViewSystem(this);
@@ -101,6 +105,8 @@ export default class Game extends Phaser.Scene {
     update(t: number, dt: number) {
         Options.time = t;
         Options.time_delta = dt;
+
+        this.demoSystem(this.world);
 
         this.levelLoaderSystem(this.world);
 

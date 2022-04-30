@@ -4,7 +4,8 @@ import {
 	defineQuery,
 	enterQuery,
 	hasComponent,
-	addComponent
+	addComponent,
+	removeComponent
 } from 'bitecs';
 
 import Options from '@/game/Options';
@@ -15,7 +16,7 @@ import PlayDemo from '@/game/components/PlayDemo';
 
 export default function createPlayerControllerSystem(cursors: Phaser.Types.Input.Keyboard.CursorKeys) {
 	const playerQuery = defineQuery([Player, Input]);
-
+	let delayDemo = 0;
 	return defineSystem((world) => {
 		const entities = playerQuery(world);
 
@@ -23,9 +24,21 @@ export default function createPlayerControllerSystem(cursors: Phaser.Types.Input
 		{
 			const id = entities[i];
 
-			if (!hasComponent(world, PlayDemo, id)) {
+			delayDemo = Math.max(0, delayDemo - 1);
+			if (hasComponent(world, PlayDemo, id)) {
+				if (delayDemo == 0) {
+					if (cursors.space.isDown) {
+						removeComponent(world, PlayDemo, id);
+						delayDemo = 10;
+					}
+				}
+			}
+			else {
 				if (cursors.space.isDown) {
-					addComponent(world, PlayDemo, id);
+					if (delayDemo == 0) {
+						addComponent(world, PlayDemo, id);
+						delayDemo = 10;
+					}
 				}
 				else if (cursors.left.isDown) {
 					Input.direction[id] = Direction.Left;
