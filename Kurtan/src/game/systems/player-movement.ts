@@ -10,6 +10,7 @@ import {
 
 import Options from '@/game/Options';
 import Game from '@/game/components/Game';
+import PlayDemo from '@/game/components/PlayDemo';
 import Levels from '@/game/data/Levels';
 import Level from '@/game/components/Level';
 import Player, { PlayerStatus, getDirection } from '@/game/components/Player';
@@ -23,6 +24,8 @@ import { LevelMap } from '@/game/data/LevelMap'
 export default function createPlayerMovementSystem(tweens: Phaser.Tweens.TweenManager) {
 	const gameQuery = defineQuery([Game]);
 	const playerQuery = defineQuery([Player, GridPosition, Input]);
+	const playerDemoQuery = defineQuery([Player, PlayDemo])
+	const playerEnterDemoQuery = enterQuery(playerDemoQuery);
 	const touchableQuery = defineQuery([Touchable, GridPosition]);
 
 	const target = {
@@ -95,6 +98,8 @@ export default function createPlayerMovementSystem(tweens: Phaser.Tweens.TweenMa
 				return map.get(x, y - offset);
 			case PlayerStatus.Walk_D:
 				return map.get(x, y + offset);
+			case PlayerStatus.None:
+				return map.get(x, y);
 			default:
 				return SpriteType.None;
         }
@@ -137,6 +142,32 @@ export default function createPlayerMovementSystem(tweens: Phaser.Tweens.TweenMa
 		}
     }
 
+	function setStairsStatus(player: number, action: PlayerStatus) {
+		const next = getMapTile(player, action, 1);
+		const cur = getMapTile(player, action, 0);
+		if (next == SpriteType.Stairs) {
+			if (cur == SpriteType.Stairs) {
+				if (PlayerStatus.Walk_U) {
+					Player.status[player] = PlayerStatus.Walk_U_Stairs;
+				} else {
+					Player.status[player] = PlayerStatus.Walk_D_Stairs;
+				}
+			} else {
+				if (PlayerStatus.Walk_U) {
+					Player.status[player] = PlayerStatus.Walk_U_Stairs_Start;
+				} else {
+					Player.status[player] = PlayerStatus.Walk_D_Stairs_Start;
+				}
+			}
+		} else {
+			if (PlayerStatus.Walk_U) {
+				Player.status[player] = PlayerStatus.Walk_U_Stairs_End;
+			} else {
+				Player.status[player] = PlayerStatus.Walk_D_Stairs_End;
+			}
+        }
+    }
+
 	function nextMapIndex(level: any, action: PlayerStatus): number {
 		switch (action) {
 			case PlayerStatus.Walk_L:
@@ -170,7 +201,7 @@ export default function createPlayerMovementSystem(tweens: Phaser.Tweens.TweenMa
 				const tile = getMapTag(player, action, 1);
 				if (!hasComponent(world, Input, tile)) {
 					addComponent(world, Input, tile);
-                }
+				}
 				Input.direction[tile] = Input.direction[player];
 			}
 			else {
@@ -178,6 +209,14 @@ export default function createPlayerMovementSystem(tweens: Phaser.Tweens.TweenMa
 				setPushStatus(player, action);
 				target.action = action;
 			}
+		}
+		else if (next1 == SpriteType.DoorClosed) {
+			setPushStatus(player, action);
+			target.action = action;
+		}
+		else if (next1 == SpriteType.Stairs)
+		{
+			setStairsStatus(player, action);
 		}
 		else if (next1 == SpriteType.Out)
 		{
@@ -205,8 +244,13 @@ export default function createPlayerMovementSystem(tweens: Phaser.Tweens.TweenMa
             }
         }
 		else {
-			updateTween(player, action);
-			Player.status[player] = action;
+			if (getMapTile(player, PlayerStatus.None, 0) == SpriteType.Stairs) {
+				setStairsStatus(player, action);
+			}
+			else {
+				updateTween(player, action);
+				Player.status[player] = action;
+            }
         }
 	}
 
@@ -227,11 +271,25 @@ export default function createPlayerMovementSystem(tweens: Phaser.Tweens.TweenMa
 				case SpriteType.BoxMoney:
 					map.set(col, row, SpriteType.BoxNormal);
 					map.setTag(col, row, tile);
+					break;
+				case SpriteType.DoorClosed:
+					map.set(col, row, SpriteType.DoorClosed);
+					break;
+				case SpriteType.Stairs:
+					map.set(col, row, SpriteType.Stairs);
+					break;
             }
 		}
     }
 
 	return defineSystem((world) => {
+		playerEnterDemoQuery(world).forEach(player => {
+			tween?.remove();
+			target.complete = false;
+			target.update = false;
+			Input.direction[player] = Direction.None;
+		});
+
 		fillMap(world);
 		playerQuery(world).forEach(player => {
 			if (target.update) {

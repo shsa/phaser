@@ -36,6 +36,8 @@ export default function createTileViewSystem(scene: Phaser.Scene) {
 				return addTile("place");
 			case SpriteType.Space:
 				return addTile("space");
+			case SpriteType.Error:
+				return addTile("error");
 			default:
 				return scene.add.sprite(0, 0, "space");
 		}

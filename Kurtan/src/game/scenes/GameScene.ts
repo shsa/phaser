@@ -63,12 +63,18 @@ export default class GameScene extends Phaser.Scene {
         this.load.image('space', '/assets/space.png');
         this.load.image('stone', '/assets/stone.png');
         this.load.image('place', '/assets/place.png');
+        this.load.image('secret', '/assets/secret.png');
+        this.load.image('stairs', '/assets/stairs.png');
+        this.load.image('error', '/assets/error.png');
 
         this.load.spritesheet("player", "/assets/player.png", { frameWidth: Options.tile_width, frameHeight: Options.tile_height, spacing: 1 });
         this.load.animation("playerAnimations", "/assets/player.json");
 
         this.load.spritesheet("box", "/assets/box.png", { frameWidth: Options.tile_width, frameHeight: Options.tile_height, spacing: 1 });
         this.load.animation("boxAnimations", "/assets/box.json");
+
+        this.load.spritesheet("door", "/assets/door.png", { frameWidth: Options.tile_width, frameHeight: Options.tile_height, spacing: 1 });
+
     }
     
     create() {
@@ -88,7 +94,7 @@ export default class GameScene extends Phaser.Scene {
         const game = addEntity(this.world);
         addComponent(this.world, Game, game);
         addComponent(this.world, Level, game);
-        Level.index[game] = 18;
+        Level.index[game] = 16;
 
         // create the systems
         this.levelLoaderSystem = createLevelLoaderSystem();

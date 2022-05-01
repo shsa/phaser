@@ -415,6 +415,49 @@
       "yoyo": false,
       "showOnStart": false,
       "hideOnComplete": false
+    },
+
+
+    {
+      "key": "walk-r",
+      "type": "frame",
+      "frames": [
+        {
+          "key": "player",
+          "frame": 18,
+          "duration": 100
+        },
+        {
+          "key": "player",
+          "frame": 19,
+          "duration": 250
+        },
+        {
+          "key": "player",
+          "frame": 18,
+          "duration": 100
+        },
+        {
+          "key": "player",
+          "frame": 20,
+          "duration": 250
+        },
+        {
+          "key": "player",
+          "frame": 18,
+          "duration": 100
+        }
+      ],
+
+      "frameRate": 25,
+      "duration": 0,
+      "skipMissedFrames": true,
+      "delay": 0,
+      "repeat": 0,
+      "repeatDelay": 0,
+      "yoyo": false,
+      "showOnStart": false,
+      "hideOnComplete": false
     }
   ],
   "globalTimeScale": 1

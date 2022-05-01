@@ -31,8 +31,14 @@ export default function createEntityViewSystem(scene: Phaser.Scene) {
 			case SpriteType.BoxNormal:
 			case SpriteType.BoxMoney:
 				return addEntity("box");
+			case SpriteType.DoorClosed:
+				return addEntity("door");
+			case SpriteType.Secret:
+				return addEntity("secret");
+			case SpriteType.Stairs:
+				return addEntity("stairs");
 			default:
-				return null;
+				return addEntity("error");
 		}
     }
 

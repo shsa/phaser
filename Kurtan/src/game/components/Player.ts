@@ -23,7 +23,15 @@ export enum PlayerStatus {
     Push_L,
     Push_R,
     Push_U,
-    Push_D
+    Push_D,
+
+    Walk_U_Stairs_Start,
+    Walk_U_Stairs,
+    Walk_U_Stairs_End,
+
+    Walk_D_Stairs_Start,
+    Walk_D_Stairs,
+    Walk_D_Stairs_End
 }
 
 export function getDirection(status: PlayerStatus): Direction {

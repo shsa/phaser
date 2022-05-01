@@ -39,6 +39,7 @@ export default function createLevelLoaderSystem() {
 			case SpriteType.BoxPlaced:
 			case SpriteType.BoxMoney:
 			case SpriteType.Wall:
+			case SpriteType.DoorClosed:
 				return true;
 			default:
 				return false;
@@ -89,24 +90,38 @@ export default function createLevelLoaderSystem() {
 		for (let row = 0; row < level.data.length; row++) {
 			const line = level.data[row];
 			for (let col = 0; col < line.length; col++) {
-				switch (Number.parseInt(line[col])) {
-					case 1:
+				switch (line[col]) {
+					case '1':
 						map.set(col, row, SpriteType.Wall);
 						break;
-					case 0:
+					case '0':
 						map.set(col, row, SpriteType.Space);
 						break;
-					case 2:
+					case '2':
 						map.set(col, row, SpriteType.BoxPlace);
 						break;
-					case 3:
+					case '3':
+						map.set(col, row, SpriteType.Space);
 						map.setEntity(col, row, SpriteType.BoxNormal);
 						break;
-					case 5:
+					case '5':
+						map.set(col, row, SpriteType.Space);
 						map.setEntity(col, row, SpriteType.BoxMoney);
 						break;
-					default:
+					case '7':
 						map.set(col, row, SpriteType.Space);
+						map.setEntity(col, row, SpriteType.DoorClosed);
+						break;
+					case '?':
+						map.set(col, row, SpriteType.Space);
+						map.setEntity(col, row, SpriteType.Secret);
+						break;
+					case 'H':
+						map.set(col, row, SpriteType.Space);
+						map.setEntity(col, row, SpriteType.Stairs);
+						break;
+					default:
+						map.set(col, row, SpriteType.Error);
 						break;
 				}
 			}
@@ -172,22 +187,32 @@ export default function createLevelLoaderSystem() {
 							addComponent(world, Entity, entity);
 							GridPosition.x[entity] = col;
 							GridPosition.y[entity] = row;
-							Sprite.type[entity] = map.getEntity(col, row);
-							setTouchable(world, map, col, row, entity);
+							const type = map.getEntity(col, row);
+							Sprite.type[entity] = type;
 
-							if (isBox(map.getEntity(col, row))) {
-								addComponent(world, Box, entity);
-								Box.money[entity] = map.getEntity(col, row) == SpriteType.BoxNormal ? 0 : 1;
-								if (map.get(col, row) == SpriteType.BoxPlace) {
-									if (Box.money[entity] == 1) {
-										Sprite.type[entity] = SpriteType.BoxMoney;
-									} else {
-										Sprite.type[entity] = SpriteType.BoxPlaced;
+							switch (map.getEntity(col, row)) {
+								case SpriteType.BoxNormal:
+								case SpriteType.BoxMoney:
+								case SpriteType.BoxPlaced:
+									{
+										addComponent(world, Box, entity);
+										Box.money[entity] = map.getEntity(col, row) == SpriteType.BoxNormal ? 0 : 1;
+										if (map.get(col, row) == SpriteType.BoxPlace) {
+											if (Box.money[entity] == 1) {
+												Sprite.type[entity] = SpriteType.BoxMoney;
+											} else {
+												Sprite.type[entity] = SpriteType.BoxPlaced;
+											}
+										} else {
+											Sprite.type[entity] = SpriteType.BoxNormal;
+										}
+										setTouchable(world, map, col, row, entity);
+										break;
 									}
-								} else {
-									Sprite.type[entity] = SpriteType.BoxNormal;
-								}
-							}
+								case SpriteType.DoorClosed:
+									setTouchable(world, map, col, row, entity);
+									break;
+                            }
 						}
 				}
 			}
