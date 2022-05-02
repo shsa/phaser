@@ -424,7 +424,7 @@
         {
           "key": "player",
           "frame": 15,
-          "duration": 100
+          "duration": 99
         },
         {
           "key": "player",
@@ -434,7 +434,76 @@
         {
           "key": "player",
           "frame": 41,
-          "duration": 100
+          "duration": 170
+        },
+        {
+          "key": "player",
+          "frame": 39,
+          "duration": 170
+        },
+        {
+          "key": "player",
+          "frame": 40,
+          "duration": 170
+        }
+      ],
+
+      "frameRate": 25,
+      "duration": 0,
+      "skipMissedFrames": true,
+      "delay": 0,
+      "repeat": 0,
+      "repeatDelay": 0,
+      "yoyo": false,
+      "showOnStart": false,
+      "hideOnComplete": false
+    },
+
+    {
+      "key": "walk_u_stairs_start",
+      "type": "frame",
+      "frames": [
+        {
+          "key": "player",
+          "frame": 36,
+          "duration": 500
+        },
+        {
+          "key": "player",
+          "frame": 39,
+          "duration": 255
+        },
+        {
+          "key": "player",
+          "frame": 40,
+          "duration": 255
+        }
+      ],
+
+      "frameRate": 25,
+      "duration": 0,
+      "skipMissedFrames": true,
+      "delay": 0,
+      "repeat": 0,
+      "repeatDelay": 0,
+      "yoyo": false,
+      "showOnStart": false,
+      "hideOnComplete": false
+    },
+
+    {
+      "key": "walk_u_stairs",
+      "type": "frame",
+      "frames": [
+        {
+          "key": "player",
+          "frame": 37,
+          "duration": 250
+        },
+        {
+          "key": "player",
+          "frame": 38,
+          "duration": 250
         },
         {
           "key": "player",
@@ -444,7 +513,44 @@
         {
           "key": "player",
           "frame": 40,
-          "duration": 100
+          "duration": 250
+        }
+      ],
+
+      "frameRate": 25,
+      "duration": 0,
+      "skipMissedFrames": true,
+      "delay": 0,
+      "repeat": 0,
+      "repeatDelay": 0,
+      "yoyo": false,
+      "showOnStart": false,
+      "hideOnComplete": false
+    },
+
+    {
+      "key": "walk_d_stairs",
+      "type": "frame",
+      "frames": [
+        {
+          "key": "player",
+          "frame": 37,
+          "duration": 250
+        },
+        {
+          "key": "player",
+          "frame": 38,
+          "duration": 250
+        },
+        {
+          "key": "player",
+          "frame": 39,
+          "duration": 250
+        },
+        {
+          "key": "player",
+          "frame": 40,
+          "duration": 250
         }
       ],
 

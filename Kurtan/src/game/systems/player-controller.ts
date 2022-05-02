@@ -11,7 +11,6 @@ import {
 import Options from '@/game/Options';
 import Game from '@/game/components/Game';
 import Player, { PlayerStatus } from '@/game/components/Player';
-import Position from '@/game/components/Position';
 import Input, { Direction } from '@/game/components/Input';
 import PlayDemo from '@/game/components/PlayDemo';
 

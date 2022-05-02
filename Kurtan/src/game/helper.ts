@@ -1,4 +1,4 @@
-import { Tweens } from 'phaser';
+import * as Phaser from "phaser";
 import { IWorld, Query } from 'bitecs';
 
 function updateTweenData(tweenData: Phaser.Types.Tweens.TweenDataConfig, progress: number) {
@@ -27,6 +27,25 @@ export function nextTween(manager: Phaser.Tweens.TweenManager, tween: Phaser.Twe
 	else {
 		return manager.add(config);
     }
+}
+
+export function addTween(timeline: Phaser.Tweens.Timeline, config: object): Phaser.Tweens.Timeline {
+	const newTimeline = timeline.manager.createTimeline();
+	newTimeline.add(config);
+
+	if (timeline.totalData > 0) {
+		const tween = timeline.data[timeline.data.length - 1];
+		const newTween = newTimeline.data[newTimeline.data.length - 1];
+
+		newTween.duration = timeline.elapsed - timeline.duration;
+		const progress = tween.elapsed / tween.duration;
+
+		for (let i = 0; i < tween.totalData; i++) {
+			updateTweenData(tween.data[i], progress);
+		}
+    }
+
+	return newTimeline;
 }
 
 export function first(world: IWorld, query: Query): number | undefined {

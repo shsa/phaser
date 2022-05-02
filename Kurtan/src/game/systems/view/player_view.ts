@@ -30,7 +30,7 @@ export default function createPlayerViewSystem(scene: Phaser.Scene) {
 				sprite.anims.currentAnim.frames.forEach(function (frame) {
 					_duration += frame.duration;
 				});
-				sprite.anims.timeScale = _duration / duration;
+				sprite.anims.timeScale = (_duration / duration) * sprite.anims.animationManager.globalTimeScale;
 			}
 			else {
 				sprite.anims.timeScale = 1;
@@ -102,8 +102,23 @@ export default function createPlayerViewSystem(scene: Phaser.Scene) {
 					play(sprite, "push-d", Options.walk_duration);
 					break;
 
+				case PlayerStatus.Walk_U_Stairs_Start:
+					play(sprite, "walk_u_stairs_start", Options.walk_stairs_start);
+					break;
 				case PlayerStatus.Walk_D_Stairs_Start:
 					play(sprite, "walk_d_stairs_start", Options.walk_stairs_start);
+					break;
+				case PlayerStatus.Walk_U_Stairs:
+					play(sprite, "walk_u_stairs", Options.walk_duration);
+					break;
+				case PlayerStatus.Walk_D_Stairs:
+					play(sprite, "walk_d_stairs", Options.walk_duration);
+					break;
+				case PlayerStatus.Walk_U_Stairs_End:
+					play(sprite, "walk_u_stairs_end", Options.walk_stairs_end);
+					break;
+				case PlayerStatus.Walk_D_Stairs_End:
+					play(sprite, "walk_d_stairs_end", Options.walk_stairs_end);
 					break;
 			}
 
