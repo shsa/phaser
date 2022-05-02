@@ -17,7 +17,7 @@ import { first } from '@/game/helper'
 
 import Game from '@/game/components/Game';
 import Player, { PlayerStatus } from '@/game/components/Player';
-import GridPosition from '@/game/components/GridPosition';
+import Position from '@/game/components/Position';
 import Sprite, { SpriteType } from '@/game/components/Sprite';
 import Tile from '@/game/components/Tile';
 import Entity from '@/game/components/Entity';
@@ -29,7 +29,7 @@ import Destroy from '@/game/components/Destroy'
 
 export default function createLevelLoaderSystem() {
 	const gameQuery = defineQuery([Game]);
-	const playerQuery = defineQuery([Player, GridPosition, Level]);
+	const playerQuery = defineQuery([Player, Position, Level]);
 	const tileQuery = defineQuery([Tile, Sprite]);
 	const entityQuery = defineQuery([Entity, Sprite]);
 
@@ -165,11 +165,11 @@ export default function createLevelLoaderSystem() {
 		for (let row = 0; row < map.height; row++) {
 			for (let col = 0; col < map.width; col++) {
 				const tile = addEntity(world);
-				addComponent(world, GridPosition, tile);
+				addComponent(world, Position, tile);
 				addComponent(world, Sprite, tile);
 				addComponent(world, Tile, tile);
-				GridPosition.x[tile] = col;
-				GridPosition.y[tile] = row;
+				Position.x[tile] = col;
+				Position.y[tile] = row;
 				Sprite.type[tile] = map.get(col, row);
 				setTouchable(world, map, col, row, tile);
 
@@ -183,11 +183,11 @@ export default function createLevelLoaderSystem() {
 					default:
 						{
 							const entity = addEntity(world);
-							addComponent(world, GridPosition, entity);
+							addComponent(world, Position, entity);
 							addComponent(world, Sprite, entity);
 							addComponent(world, Entity, entity);
-							GridPosition.x[entity] = col;
-							GridPosition.y[entity] = row;
+							Position.x[entity] = col;
+							Position.y[entity] = row;
 							const type = map.getEntity(col, row);
 							Sprite.type[entity] = type;
 
@@ -227,8 +227,8 @@ export default function createLevelLoaderSystem() {
 			Level.index[player] = level_index;
 
 			if (Player.status[player] == PlayerStatus.Start || hasComponent(world, PlayDemo, player)) {
-				GridPosition.x[player] = level.defaultStart.x;
-				GridPosition.y[player] = level.defaultStart.y;
+				Position.x[player] = level.defaultStart.x;
+				Position.y[player] = level.defaultStart.y;
 
 				Player.status[player] = PlayerStatus.Idle;
 			}
@@ -247,14 +247,14 @@ export default function createLevelLoaderSystem() {
 		map.clear();
 
 		tileQuery(world).forEach(id => {
-			const x = GridPosition.x[id];
-			const y = GridPosition.y[id];
+			const x = Position.x[id];
+			const y = Position.y[id];
 			map.set(x, y, Sprite.type[id]);
 		});
 
 		entityQuery(world).forEach(id => {
-			const x = GridPosition.x[id];
-			const y = GridPosition.y[id];
+			const x = Position.x[id];
+			const y = Position.y[id];
 			map.setEntity(x, y, Sprite.type[id]);
 		});
     }

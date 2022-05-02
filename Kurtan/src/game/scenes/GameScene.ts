@@ -16,7 +16,7 @@ import Options from '@/game/Options';
 import Game from '@/game/components/Game'
 import Player, { PlayerStatus } from '@/game/components/Player';
 import Input from '@/game/components/Input';
-import GridPosition from '@/game/components/GridPosition';
+import Position from '@/game/components/Position';
 import Sprite from '@/game/components/Sprite';
 import Level from '@/game/components/Level';
 
@@ -86,7 +86,7 @@ export default class GameScene extends Phaser.Scene {
 
         addComponent(this.world, Player, player_id);
         addComponent(this.world, Level, player_id);
-        addComponent(this.world, GridPosition, player_id);
+        addComponent(this.world, Position, player_id);
         addComponent(this.world, Input, player_id);
 
         Player.status[player_id] = PlayerStatus.Start;

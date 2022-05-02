@@ -8,7 +8,7 @@ import {
 
 import Options from '@/game/Options';
 import Entity from '@/game/components/Entity';
-import GridPosition from '@/game/components/GridPosition';
+import Position from '@/game/components/Position';
 import Sprite, { SpriteType } from '@/game/components/Sprite';
 import Input, { Direction } from '@/game/components/Input';
 import { nextTween } from '@/game/helper';
@@ -16,8 +16,8 @@ import BoxPlace from '@/game/components/BoxPlace';
 import Box from '@/game/components/Box';
 
 export default function createEntityMovementSystem(tweens: Phaser.Tweens.TweenManager) {
-	const entityQuery = defineQuery([Entity, Sprite, Input, GridPosition]);
-	const boxPlaceQuery = defineQuery([BoxPlace, GridPosition]);
+	const entityQuery = defineQuery([Entity, Sprite, Input, Position]);
+	const boxPlaceQuery = defineQuery([BoxPlace, Position]);
 
 	const target = {
 		x: 0,
@@ -31,8 +31,8 @@ export default function createEntityMovementSystem(tweens: Phaser.Tweens.TweenMa
 
 	function makeTween(player: number, dir: Direction) {
 		if (tween == null) {
-			target.x = GridPosition.x[player];
-			target.y = GridPosition.y[player];
+			target.x = Position.x[player];
+			target.y = Position.y[player];
 		}
 
 		target.next_x = target.x;
@@ -75,12 +75,12 @@ export default function createEntityMovementSystem(tweens: Phaser.Tweens.TweenMa
     }
 
 	function isBoxPlaced(world: IWorld, box: number) {
-		const x = Math.round(GridPosition.x[box]);
-		const y = Math.round(GridPosition.y[box]);
+		const x = Math.round(Position.x[box]);
+		const y = Math.round(Position.y[box]);
 		const entities = boxPlaceQuery(world);
 		for (let i = 0; i < entities.length; i++) {
 			const place = entities[i];
-			if (GridPosition.x[place] == x && GridPosition.y[place] == y) {
+			if (Position.x[place] == x && Position.y[place] == y) {
 				return true;
             }
 		}
@@ -107,12 +107,12 @@ export default function createEntityMovementSystem(tweens: Phaser.Tweens.TweenMa
             }
 
 			if (tween?.isPlaying() ?? false) {
-				GridPosition.x[id] = target.x;
-				GridPosition.y[id] = target.y;
+				Position.x[id] = target.x;
+				Position.y[id] = target.y;
 			}
 			else {
-				GridPosition.x[id] = Math.round(GridPosition.x[id]);
-				GridPosition.y[id] = Math.round(GridPosition.y[id]);
+				Position.x[id] = Math.round(Position.x[id]);
+				Position.y[id] = Math.round(Position.y[id]);
 
 				if (Input.direction[id] == Direction.None) {
 					if (tween) {

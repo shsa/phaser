@@ -16,7 +16,7 @@ import Level from '@/game/components/Level';
 import Player, { PlayerStatus, getDirection } from '@/game/components/Player';
 import Touchable from '@/game/components/Touchable';
 import Sprite, { SpriteType } from '@/game/components/Sprite';
-import GridPosition from '@/game/components/GridPosition';
+import Position from '@/game/components/Position';
 import Input, { Direction, getOffset } from '@/game/components/Input';
 import { addTween } from '@/game/helper';
 import { LevelMap } from '@/game/data/LevelMap'
@@ -30,10 +30,10 @@ enum UpdateFlag {
 
 export default function createPlayerMovementSystem(tweens: Phaser.Tweens.TweenManager) {
 	const gameQuery = defineQuery([Game]);
-	const playerQuery = defineQuery([Player, GridPosition, Input]);
+	const playerQuery = defineQuery([Player, Position, Input]);
 	const playerDemoQuery = defineQuery([Player, PlayDemo])
 	const playerEnterDemoQuery = enterQuery(playerDemoQuery);
-	const touchableQuery = defineQuery([Touchable, GridPosition]);
+	const touchableQuery = defineQuery([Touchable, Position]);
 
 	const target = {
 		x: 0,
@@ -54,8 +54,8 @@ export default function createPlayerMovementSystem(tweens: Phaser.Tweens.TweenMa
 
 	function updateTween(player: number, action: PlayerStatus, duration: number) {
 		if (action != target.status) {
-			target.x = GridPosition.x[player];
-			target.y = GridPosition.y[player];
+			target.x = Position.x[player];
+			target.y = Position.y[player];
 			timeline.elapsed = timeline.duration;
 		}
 		target.status = action;
@@ -85,13 +85,13 @@ export default function createPlayerMovementSystem(tweens: Phaser.Tweens.TweenMa
 		});
 		timeline.play();
 
-		GridPosition.x[player] = target.x;
-		GridPosition.y[player] = target.y;
+		Position.x[player] = target.x;
+		Position.y[player] = target.y;
     }
 
 	function getMapTile(player: number, action: PlayerStatus, offset: number): SpriteType {
-		const x = Math.round(GridPosition.x[player]);
-		const y = Math.round(GridPosition.y[player]);
+		const x = Math.round(Position.x[player]);
+		const y = Math.round(Position.y[player]);
 
 		switch (action) {
 			case PlayerStatus.Walk_L:
@@ -110,8 +110,8 @@ export default function createPlayerMovementSystem(tweens: Phaser.Tweens.TweenMa
     }
 
 	function getMapTag(player: number, action: PlayerStatus, offset: number): number {
-		const x = Math.round(GridPosition.x[player]);
-		const y = Math.round(GridPosition.y[player]);
+		const x = Math.round(Position.x[player]);
+		const y = Math.round(Position.y[player]);
 
 		switch (action) {
 			case PlayerStatus.Walk_L:
@@ -148,8 +148,8 @@ export default function createPlayerMovementSystem(tweens: Phaser.Tweens.TweenMa
 
 	function setStairsStatus(player: number, action: PlayerStatus) {
 		const offset = getOffset(getDirection(action));
-		let x = GridPosition.x[player];
-		let y = GridPosition.y[player];
+		let x = Position.x[player];
+		let y = Position.y[player];
 		target.x = x;
 		target.y = y;
 
@@ -370,16 +370,16 @@ export default function createPlayerMovementSystem(tweens: Phaser.Tweens.TweenMa
 
 			switch (action) {
 				case PlayerStatus.Walk_L:
-					GridPosition.x[player] = 25;
+					Position.x[player] = 25;
 					break;
 				case PlayerStatus.Walk_R:
-					GridPosition.x[player] = -1;
+					Position.x[player] = -1;
 					break;
 				case PlayerStatus.Walk_U:
-					GridPosition.y[player] = 16;
+					Position.y[player] = 16;
 					break;
 				case PlayerStatus.Walk_D:
-					GridPosition.y[player] = -1;
+					Position.y[player] = -1;
 					break;
 			}
 			target.status = action;
@@ -401,8 +401,8 @@ export default function createPlayerMovementSystem(tweens: Phaser.Tweens.TweenMa
 		const tiles = touchableQuery(world);
 		for (let i = 0; i < tiles.length; i++) {
 			const tile = tiles[i];
-			const col = Math.round(GridPosition.x[tile]);
-			const row = Math.round(GridPosition.y[tile]);
+			const col = Math.round(Position.x[tile]);
+			const row = Math.round(Position.y[tile]);
 			switch (Sprite.type[tile]) {
 				case SpriteType.Wall:
 				case SpriteType.Stone:
@@ -434,8 +434,8 @@ export default function createPlayerMovementSystem(tweens: Phaser.Tweens.TweenMa
 		fillMap(world);
 		playerQuery(world).forEach(player => {
 			if ((target.update & UpdateFlag.Position) == UpdateFlag.Position) {
-				GridPosition.x[player] = target.x;
-				GridPosition.y[player] = target.y;
+				Position.x[player] = target.x;
+				Position.y[player] = target.y;
 				target.update &= ~UpdateFlag.Position;
 			}
 

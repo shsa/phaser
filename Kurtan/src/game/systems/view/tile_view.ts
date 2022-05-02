@@ -7,7 +7,7 @@ import {
 } from 'bitecs';
 
 import Tile from '@/game/components/Tile';
-import GridPosition from '@/game/components/GridPosition';
+import Position from '@/game/components/Position';
 import Sprite, { SpriteType } from '@/game/components/Sprite';
 import Destroy from '@/game/components/Destroy';
 import Options from '@/game/Options';
@@ -15,7 +15,7 @@ import Options from '@/game/Options';
 export default function createTileViewSystem(scene: Phaser.Scene) {
 	const spritesById = new Map<number, Phaser.GameObjects.Sprite>();
 
-	const spriteQuery = defineQuery([Tile, GridPosition, Sprite]);
+	const spriteQuery = defineQuery([Tile, Position, Sprite]);
 	const destroyQuery = defineQuery([Tile, Destroy, Sprite])
 	
 	const spriteQueryEnter = enterQuery(spriteQuery);
@@ -47,8 +47,8 @@ export default function createTileViewSystem(scene: Phaser.Scene) {
 		spriteQueryEnter(world).forEach(id => {
 			const sprite = addSprite(Sprite.type[id]);
 			spritesById.set(id, sprite);
-			sprite.x = Options.game_offset_x + GridPosition.x[id] * Options.tile_width;
-			sprite.y = Options.game_offset_y + GridPosition.y[id] * Options.tile_height;
+			sprite.x = Options.game_offset_x + Position.x[id] * Options.tile_width;
+			sprite.y = Options.game_offset_y + Position.y[id] * Options.tile_height;
         })
 
 		destroyQuery(world).forEach(id => {

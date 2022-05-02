@@ -7,13 +7,13 @@ import {
 } from 'bitecs';
 
 import Player, { PlayerStatus } from '@/game/components/Player';
-import GridPosition from '@/game/components/GridPosition';
+import Position from '@/game/components/Position';
 import Options from '@/game/Options';
 
 export default function createPlayerViewSystem(scene: Phaser.Scene) {
 	const spritesById = new Map<number, Phaser.GameObjects.Sprite>();
 
-	const playerQuery = defineQuery([Player, GridPosition]);
+	const playerQuery = defineQuery([Player, Position]);
 	
 	const playerQueryEnter = enterQuery(playerQuery);
 	const playerQueryExit = exitQuery(playerQuery);
@@ -122,8 +122,8 @@ export default function createPlayerViewSystem(scene: Phaser.Scene) {
 					break;
 			}
 
-			sprite.x = Options.game_offset_x + GridPosition.x[id] * Options.tile_width;
-			sprite.y = Options.game_offset_y + GridPosition.y[id] * Options.tile_height;
+			sprite.x = Options.game_offset_x + Position.x[id] * Options.tile_width;
+			sprite.y = Options.game_offset_y + Position.y[id] * Options.tile_height;
 		}
 
 		const entitiesExited = playerQueryExit(world);

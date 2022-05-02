@@ -14,7 +14,7 @@ import {
 
 import Options from '@/game/Options';
 import Player, { PlayerStatus } from '@/game/components/Player';
-import GridPosition from '@/game/components/GridPosition';
+import Position from '@/game/components/Position';
 import Input, { Direction, getOffset } from '@/game/components/Input';
 import PlayDemo from '@/game/components/PlayDemo';
 import Level from '@/game/components/Level';
@@ -52,8 +52,8 @@ export default function createDemoSystem(tweens: Phaser.Tweens.TweenManager, ani
 			demo.index = 0;
 			demo.dir = getDirection(demo.steps[demo.index]);
 			const offset = getOffset(demo.dir);
-			demo.x = Math.round(GridPosition.x[player]) + offset.x;
-			demo.y = Math.round(GridPosition.y[player]) + offset.y;
+			demo.x = Math.round(Position.x[player]) + offset.x;
+			demo.y = Math.round(Position.y[player]) + offset.y;
 			Input.direction[player] = demo.dir;
 
 			tweens.timeScale = 4;
@@ -93,8 +93,8 @@ export default function createDemoSystem(tweens: Phaser.Tweens.TweenManager, ani
 			const player = entities[i];
 
 			if (demo.index < demo.steps.length) {
-				const x = Math.round(GridPosition.x[player]);
-				const y = Math.round(GridPosition.y[player]);
+				const x = Math.round(Position.x[player]);
+				const y = Math.round(Position.y[player]);
 				//const x = GridPosition.x[player];
 				//const y = GridPosition.y[player];
 

@@ -1,8 +1,8 @@
 import { defineComponent, Types } from 'bitecs'
 
-export const GridPosition = defineComponent({
+export const Position = defineComponent({
 	x: Types.f32,
 	y: Types.f32
 })
 
-export default GridPosition
+export default Position

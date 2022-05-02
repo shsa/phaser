@@ -7,14 +7,14 @@ import {
 } from 'bitecs';
 
 import Entity from '@/game/components/Entity';
-import GridPosition from '@/game/components/GridPosition';
+import Position from '@/game/components/Position';
 import Sprite, { SpriteType } from '@/game/components/Sprite';
 import Options from '@/game/Options';
 
 export default function createEntityViewSystem(scene: Phaser.Scene) {
 	const spritesById = new Map<number, Phaser.GameObjects.Sprite>();
 
-	const spriteQuery = defineQuery([Entity, GridPosition, Sprite]);
+	const spriteQuery = defineQuery([Entity, Position, Sprite]);
 	
 	const spriteQueryEnter = enterQuery(spriteQuery);
 	const spriteQueryExit = exitQuery(spriteQuery);
@@ -66,8 +66,8 @@ export default function createEntityViewSystem(scene: Phaser.Scene) {
 			return;
 		}
 
-		sprite.x = Options.game_offset_x + GridPosition.x[entity] * Options.tile_width;
-		sprite.y = Options.game_offset_y + GridPosition.y[entity] * Options.tile_height;
+		sprite.x = Options.game_offset_x + Position.x[entity] * Options.tile_width;
+		sprite.y = Options.game_offset_y + Position.y[entity] * Options.tile_height;
 
 		switch (Sprite.type[entity]) {
 			case SpriteType.BoxNormal:
