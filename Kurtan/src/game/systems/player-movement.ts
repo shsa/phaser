@@ -46,7 +46,7 @@ export default function createPlayerMovementSystem(tweens: Phaser.Tweens.TweenMa
 
 	const map = new LevelMap();
 
-	function updateTween(player: number, action: PlayerStatus) {
+	function updateTween(player: number, action: PlayerStatus, duration: number) {
 		tween?.remove();
 
 		if (action != target.action) {
@@ -65,7 +65,7 @@ export default function createPlayerMovementSystem(tweens: Phaser.Tweens.TweenMa
 
 		tween = nextTween(tweens, tween, {
 			targets: target,
-			duration: Options.walk_duration,
+			duration: duration,
 			x: target.end_x,
 			y: target.end_y,
 			ease: Phaser.Math.Easing.Linear,
@@ -147,22 +147,28 @@ export default function createPlayerMovementSystem(tweens: Phaser.Tweens.TweenMa
 		const cur = getMapTile(player, action, 0);
 		if (next == SpriteType.Stairs) {
 			if (cur == SpriteType.Stairs) {
-				if (PlayerStatus.Walk_U) {
+				if (action == PlayerStatus.Walk_U) {
+					updateTween(player, action, Options.walk_duration);
 					Player.status[player] = PlayerStatus.Walk_U_Stairs;
 				} else {
+					updateTween(player, action, Options.walk_duration);
 					Player.status[player] = PlayerStatus.Walk_D_Stairs;
 				}
 			} else {
-				if (PlayerStatus.Walk_U) {
+				if (action == PlayerStatus.Walk_U) {
+					updateTween(player, action, Options.walk_stairs_start);
 					Player.status[player] = PlayerStatus.Walk_U_Stairs_Start;
 				} else {
+					updateTween(player, action, Options.walk_stairs_start);
 					Player.status[player] = PlayerStatus.Walk_D_Stairs_Start;
 				}
 			}
 		} else {
-			if (PlayerStatus.Walk_U) {
+			if (action == PlayerStatus.Walk_U) {
+				updateTween(player, action, Options.walk_stairs_end);
 				Player.status[player] = PlayerStatus.Walk_U_Stairs_End;
 			} else {
+				updateTween(player, action, Options.walk_stairs_end);
 				Player.status[player] = PlayerStatus.Walk_D_Stairs_End;
 			}
         }
@@ -196,7 +202,7 @@ export default function createPlayerMovementSystem(tweens: Phaser.Tweens.TweenMa
 		}
 		else if (next1 == SpriteType.BoxNormal) {
 			if (getMapTile(player, action, 2) == SpriteType.Space) {
-				updateTween(player, action);
+				updateTween(player, action, Options.walk_duration);
 				setPushStatus(player, action);
 				const tile = getMapTag(player, action, 1);
 				if (!hasComponent(world, Input, tile)) {
@@ -248,7 +254,7 @@ export default function createPlayerMovementSystem(tweens: Phaser.Tweens.TweenMa
 				setStairsStatus(player, action);
 			}
 			else {
-				updateTween(player, action);
+				updateTween(player, action, Options.walk_duration);
 				Player.status[player] = action;
             }
         }

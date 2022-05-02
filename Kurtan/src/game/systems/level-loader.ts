@@ -40,6 +40,7 @@ export default function createLevelLoaderSystem() {
 			case SpriteType.BoxMoney:
 			case SpriteType.Wall:
 			case SpriteType.DoorClosed:
+			case SpriteType.Stairs:
 				return true;
 			default:
 				return false;
@@ -210,6 +211,9 @@ export default function createLevelLoaderSystem() {
 										break;
 									}
 								case SpriteType.DoorClosed:
+									setTouchable(world, map, col, row, entity);
+									break;
+								case SpriteType.Stairs:
 									setTouchable(world, map, col, row, entity);
 									break;
                             }

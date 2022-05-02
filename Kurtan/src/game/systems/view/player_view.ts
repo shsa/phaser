@@ -101,6 +101,10 @@ export default function createPlayerViewSystem(scene: Phaser.Scene) {
 				case PlayerStatus.Push_D:
 					play(sprite, "push-d", Options.walk_duration);
 					break;
+
+				case PlayerStatus.Walk_D_Stairs_Start:
+					play(sprite, "walk_d_stairs_start", Options.walk_stairs_start);
+					break;
 			}
 
 			sprite.x = Options.game_offset_x + GridPosition.x[id] * Options.tile_width;

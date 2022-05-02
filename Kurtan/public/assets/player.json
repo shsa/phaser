@@ -417,34 +417,33 @@
       "hideOnComplete": false
     },
 
-
     {
-      "key": "walk-r",
+      "key": "walk_d_stairs_start",
       "type": "frame",
       "frames": [
         {
           "key": "player",
-          "frame": 18,
+          "frame": 15,
           "duration": 100
         },
         {
           "key": "player",
-          "frame": 19,
-          "duration": 250
-        },
-        {
-          "key": "player",
-          "frame": 18,
+          "frame": 14,
           "duration": 100
         },
         {
           "key": "player",
-          "frame": 20,
+          "frame": 41,
+          "duration": 100
+        },
+        {
+          "key": "player",
+          "frame": 39,
           "duration": 250
         },
         {
           "key": "player",
-          "frame": 18,
+          "frame": 40,
           "duration": 100
         }
       ],
