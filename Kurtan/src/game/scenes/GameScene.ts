@@ -108,7 +108,7 @@ export default class GameScene extends Phaser.Scene {
         const game = addEntity(this.world);
         addComponent(this.world, Game, game);
         addComponent(this.world, Level, game);
-        Level.index[game] = 17;
+        Level.index[game] = 18;
 
         // create the systems
         this.levelLoaderSystem = createLevelLoaderSystem();

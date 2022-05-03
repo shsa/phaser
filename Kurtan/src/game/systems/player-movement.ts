@@ -357,6 +357,10 @@ export default function createPlayerMovementSystem(tweens: Phaser.Tweens.TweenMa
 					break;
 			}
 			target.dir = dir;
+			target.x = Position.x[player];
+			target.y = Position.y[player];
+			timeline.destroy();
+			timeline = timeline.manager.timeline();
 			target.update = UpdateFlag.Direction;
         }
 		else if (next1 == SpriteType.Stairs) {
@@ -420,6 +424,7 @@ export default function createPlayerMovementSystem(tweens: Phaser.Tweens.TweenMa
 	return defineSystem((world) => {
 		playerEnterDemoQuery(world).forEach(player => {
 			timeline.destroy();
+			timeline = tweens.timeline();
 			target.update = UpdateFlag.None;
 			Input.direction[player] = Direction.None;
 		});
