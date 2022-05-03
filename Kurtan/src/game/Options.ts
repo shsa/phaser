@@ -6,7 +6,7 @@ const Options = {
 
     walk_duration: 250,
     walk_stairs_start: 500,
-    walk_stairs_end: 500,
+    walk_stairs_end: 1000,
     idle_timeout: 2000,
     rest_timeout: 15000,
 

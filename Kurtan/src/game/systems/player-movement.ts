@@ -24,8 +24,8 @@ import { LevelMap } from '@/game/data/LevelMap'
 enum UpdateFlag {
 	None = 0,
 	Position = 1,
-	Status = 2,
-	MoveTo = 4
+	Direction = 2,
+	Status = 4,
 }
 
 export default function createPlayerMovementSystem(tweens: Phaser.Tweens.TweenManager) {
@@ -52,17 +52,16 @@ export default function createPlayerMovementSystem(tweens: Phaser.Tweens.TweenMa
 
 	const map = new LevelMap();
 
-	function updateTween(player: number, action: PlayerStatus, duration: number) {
-		if (action != target.status) {
+	function updateTween(player: number, dir: Direction, duration: number) {
+		if (dir != target.dir) {
 			target.x = Position.x[player];
 			target.y = Position.y[player];
 			timeline.elapsed = timeline.duration;
 		}
-		target.status = action;
+		target.dir = dir;
 		target.end_x = Math.round(target.x);
 		target.end_y = Math.round(target.y);
 
-		const dir = getDirection(action);
 		const offset = getOffset(dir);
 		target.end_x += offset.x;
 		target.end_y += offset.y;
@@ -89,85 +88,58 @@ export default function createPlayerMovementSystem(tweens: Phaser.Tweens.TweenMa
 		Position.y[player] = target.y;
     }
 
-	function getMapTile(player: number, action: PlayerStatus, offset: number): SpriteType {
+	function getMapTile(player: number, dir: Direction, dist: number): SpriteType {
 		const x = Math.round(Position.x[player]);
 		const y = Math.round(Position.y[player]);
-
-		switch (action) {
-			case PlayerStatus.Walk_L:
-				return map.get(x - offset, y);
-			case PlayerStatus.Walk_R:
-				return map.get(x + offset, y);
-			case PlayerStatus.Walk_U:
-				return map.get(x, y - offset);
-			case PlayerStatus.Walk_D:
-				return map.get(x, y + offset);
-			case PlayerStatus.None:
-				return map.get(x, y);
-			default:
-				return SpriteType.None;
-        }
+		const offset = getOffset(dir);
+		return map.get(x + offset.x * dist, y + offset.y * dist);
     }
 
-	function getMapTag(player: number, action: PlayerStatus, offset: number): number {
+	function getMapTag(player: number, dir: Direction, dist: number): number {
 		const x = Math.round(Position.x[player]);
 		const y = Math.round(Position.y[player]);
-
-		switch (action) {
-			case PlayerStatus.Walk_L:
-				return map.getTag(x - offset, y);
-			case PlayerStatus.Walk_R:
-				return map.getTag(x + offset, y);
-			case PlayerStatus.Walk_U:
-				return map.getTag(x, y - offset);
-			case PlayerStatus.Walk_D:
-				return map.getTag(x, y + offset);
-			default:
-				return 0;
-		}
+		const offset = getOffset(dir);
+		return map.getTag(x + offset.x * dist, y + offset.y * dist);
 	}
 
-	function setPushStatus(player: number, action: PlayerStatus) {
-		switch (action) {
-			case PlayerStatus.Walk_L:
+	function setPushStatus(player: number, dir: Direction) {
+		switch (dir) {
+			case Direction.Left:
 				Player.status[player] = PlayerStatus.Push_L;
 				break;
-			case PlayerStatus.Walk_R:
+			case Direction.Right:
 				Player.status[player] = PlayerStatus.Push_R;
 				break;
-			case PlayerStatus.Walk_U:
+			case Direction.Up:
 				Player.status[player] = PlayerStatus.Push_U;
 				break;
-			case PlayerStatus.Walk_D:
+			case Direction.Down:
 				Player.status[player] = PlayerStatus.Push_D;
 				break;
 			default:
-				Player.status[player] = action;
+				Player.status[player] = PlayerStatus.None;
 		}
+		target.dir = dir;
     }
 
-	function setStairsStatus(player: number, action: PlayerStatus) {
-		const offset = getOffset(getDirection(action));
-		let x = Position.x[player];
-		let y = Position.y[player];
+	function setStairsStatus(player: number, dir: Direction) {
+		const x = Math.round(Position.x[player]);
+		const y = Math.round(Position.y[player]);
 		target.x = x;
 		target.y = y;
 
+		const offset = getOffset(dir);
 		const cur = map.get(x, y);
+		const next = map.get(x + offset.x, y + offset.y);
 
 		timeline.destroy();
 		timeline = tweens.timeline();
 
-		let status = PlayerStatus.None;
-
 		if (cur == SpriteType.Space) {
-			if (action == PlayerStatus.Walk_U) {
-				status = PlayerStatus.Walk_U_Stairs;
-
+			if (dir == Direction.Up) {
 				target.x = x + offset.x * 0.6;
 				target.y = y + offset.y * 0.6;
-				target.status = PlayerStatus.Walk_U_Stairs_Start;
-				target.update = UpdateFlag.Status;
+				Player.status[player] = PlayerStatus.Walk_U_Stairs_Start;
 
 				timeline.add({
 					targets: target,
@@ -175,85 +147,6 @@ export default function createPlayerMovementSystem(tweens: Phaser.Tweens.TweenMa
 					x: target.x,
 					y: target.y,
 					repeat: 0
-				});
-
-				x = x + offset.x;
-				y = y + offset.y;
-				timeline.add({
-					targets: target,
-					duration: Options.walk_stairs_start * 0.5,
-					x: x,
-					y: y,
-					repeat: 0,
-					onUpdate: function () {
-						target.update = UpdateFlag.Position;
-					}
-				});
-			}
-			else {
-				status = PlayerStatus.Walk_D_Stairs;
-
-				target.x = x + offset.x * 0.4;
-				target.y = y + offset.y * 0.4;
-				target.status = PlayerStatus.Walk_D_Stairs_Start;
-				target.update = UpdateFlag.Status;
-
-				timeline.add({
-					targets: target,
-					duration: Options.walk_stairs_start * 0.3,
-					x: target.x,
-					y: target.y,
-					repeat: 0
-				});
-
-				x = x + offset.x;
-				y = y + offset.y;
-				timeline.add({
-					targets: target,
-					duration: Options.walk_stairs_start * 0.7,
-					x: x,
-					y: y,
-					repeat: 0,
-					onUpdate: function () {
-						target.update = UpdateFlag.Position;
-					}
-				});
-			}
-		}
-
-		x = x + offset.x;
-		y = y + offset.y;
-		while (map.get(x, y) == SpriteType.Stairs) {
-			timeline.add({
-				targets: target,
-				duration: Options.walk_duration,
-				x: x,
-				y: y,
-				repeat: 0,
-				onStart: function () {
-					target.status = status;
-					target.update = UpdateFlag.Status;
-                },
-				onUpdate: function () {
-					target.update = UpdateFlag.Position;
-				}
-			});
-			x = x + offset.x;
-			y = y + offset.y;
-        }
-
-		if (map.get(x, y) == SpriteType.Space) {
-			if (action == PlayerStatus.Walk_U) {
-				timeline.add({
-					targets: target,
-					duration: Options.walk_stairs_start * 0.5,
-					x: x,
-					y: y,
-					repeat: 0,
-					onStart: function () {
-						target.status = PlayerStatus.Walk_U_Stairs_End;
-						target.update = UpdateFlag.Status;
-					}
 				});
 
 				timeline.add({
@@ -264,13 +157,18 @@ export default function createPlayerMovementSystem(tweens: Phaser.Tweens.TweenMa
 					repeat: 0,
 					onUpdate: function () {
 						target.update = UpdateFlag.Position;
+					},
+					onComplete: function () {
+						timeline.destroy();
+						target.dir = dir;
+						target.update = UpdateFlag.Direction;
 					}
 				});
 			}
 			else {
 				target.x = x + offset.x * 0.4;
 				target.y = y + offset.y * 0.4;
-				target.status = PlayerStatus.Walk_D_Stairs_Start;
+				Player.status[player] = PlayerStatus.Walk_D_Stairs_Start;
 
 				timeline.add({
 					targets: target,
@@ -288,76 +186,152 @@ export default function createPlayerMovementSystem(tweens: Phaser.Tweens.TweenMa
 					repeat: 0,
 					onUpdate: function () {
 						target.update = UpdateFlag.Position;
+					},
+					onComplete: function () {
+						timeline.destroy();
+						target.dir = dir;
+						target.update = UpdateFlag.Direction;
 					}
 				});
 			}
 		}
-		else if (map.get(x, y) == SpriteType.Out) {
-			timeline.add({
-				targets: target,
-				duration: 0,
-				x: x,
-				y: y,
-				repeat: 0,
-				onStart: function () {
-					target.status = action;
-					target.update = UpdateFlag.MoveTo;
-					timeline.stop();
+		else if (cur == SpriteType.Stairs || cur == SpriteType.Out) {
+			if (next == SpriteType.Stairs) {
+				timeline.add({
+					targets: target,
+					duration: Options.walk_duration,
+					x: x + offset.x,
+					y: y + offset.y,
+					onUpdate: function () {
+						target.update = UpdateFlag.Position;
+					},
+					onComplete: function () {
+						timeline.destroy();
+						target.dir = dir;
+						target.update = UpdateFlag.Direction;
+					}
+				});
+				if (dir == Direction.Up) {
+					Player.status[player] = PlayerStatus.Walk_U_Stairs;
 				}
-			});
+				else {
+					Player.status[player] = PlayerStatus.Walk_D_Stairs;
+                }
+            }
+			else if (next == SpriteType.Space) {
+				if (dir == Direction.Up) {
+					timeline.add({
+						targets: target,
+						duration: Options.walk_stairs_end * 0.15,
+						x: x + offset.x * 0.5,
+						y: y + offset.y * 0.5,
+						repeat: 0,
+						onUpdate: function () {
+							target.update = UpdateFlag.Position;
+						}
+					});
+
+					timeline.add({
+						targets: target,
+						duration: Options.walk_stairs_end * 0.35,
+						x: x + offset.x * 0.5,
+						y: y + offset.y * 0.5,
+						repeat: 0
+					});
+
+					timeline.add({
+						targets: target,
+						duration: Options.walk_stairs_end * 0.5,
+						x: x + offset.x,
+						y: y + offset.y,
+						repeat: 0,
+						onStart: function () {
+							target.x = x + offset.x;
+							target.y = y + offset.y;
+						},
+						onUpdate: function () {
+							target.update = UpdateFlag.Position;
+						}
+					});
+					Player.status[player] = PlayerStatus.Walk_U_Stairs_End;
+				}
+				else {
+					timeline.add({
+						targets: target,
+						duration: Options.walk_stairs_end * 0.2,
+						x: x + offset.x * 0.6,
+						y: y + offset.y * 0.6,
+						repeat: 0,
+						onUpdate: function () {
+							target.update = UpdateFlag.Position;
+                        }
+					});
+
+					timeline.add({
+						targets: target,
+						duration: Options.walk_stairs_end * 0.6,
+						x: x + offset.x * 0.6,
+						y: y + offset.y * 0.6,
+						repeat: 0
+					});
+
+					timeline.add({
+						targets: target,
+						duration: Options.walk_stairs_end * 0.2,
+						x: x + offset.x,
+						y: y + offset.y,
+						repeat: 0,
+						onUpdate: function () {
+							target.update = UpdateFlag.Position;
+						}
+					});
+					Player.status[player] = PlayerStatus.Walk_D_Stairs_End;
+				}
+            }
         }
 		timeline.play();
     }
 
-	function nextMapIndex(level: any, action: PlayerStatus): number {
-		switch (action) {
-			case PlayerStatus.Walk_L:
+	function nextMapIndex(level: any, dir: Direction): number {
+		switch (dir) {
+			case Direction.Left:
 				return level.neighbours[0];
-			case PlayerStatus.Walk_U:
+			case Direction.Up:
 				return level.neighbours[1];
-			case PlayerStatus.Walk_R:
+			case Direction.Right:
 				return level.neighbours[2];
-			case PlayerStatus.Walk_D:
+			case Direction.Down:
 				return level.neighbours[3];
 			default:
 				return 0;
         }
     }
 
-	function moveTo(world: IWorld, player: number, action: PlayerStatus) {
+	function moveTo(world: IWorld, player: number, dir: Direction) {
 		if (timeline.isPlaying()) {
 			return;
 		}
 
-		const next1 = getMapTile(player, action, 1);
+		const next1 = getMapTile(player, dir, 1);
 		if (next1 == SpriteType.Wall) {
-			//updateTween(player, PlayerStatus.None);
-			setPushStatus(player, action);
-			target.status = action;
+			setPushStatus(player, dir);
 		}
 		else if (next1 == SpriteType.BoxNormal) {
-			if (getMapTile(player, action, 2) == SpriteType.Space) {
-				updateTween(player, action, Options.walk_duration);
-				setPushStatus(player, action);
-				const tile = getMapTag(player, action, 1);
+			if (getMapTile(player, dir, 2) == SpriteType.Space) {
+				updateTween(player, dir, Options.walk_duration);
+				const tile = getMapTag(player, dir, 1);
 				if (!hasComponent(world, Input, tile)) {
 					addComponent(world, Input, tile);
 				}
 				Input.direction[tile] = Input.direction[player];
+				setPushStatus(player, dir);
 			}
 			else {
-				//updateTween(player, PlayerStatus.None);
-				setPushStatus(player, action);
-				target.status = action;
+				setPushStatus(player, dir);
 			}
 		}
 		else if (next1 == SpriteType.DoorClosed) {
-			setPushStatus(player, action);
-			target.status = action;
-		}
-		else if (next1 == SpriteType.Stairs)
-		{
-			setStairsStatus(player, action);
+			setPushStatus(player, dir);
 		}
 		else if (next1 == SpriteType.Out)
 		{
@@ -365,33 +339,52 @@ export default function createPlayerMovementSystem(tweens: Phaser.Tweens.TweenMa
 			const level = Levels[level_index - 1];
 			gameQuery(world).forEach(game => {
 				addComponent(world, Level, game);
-				Level.index[game] = nextMapIndex(level, action);
+				Level.index[game] = nextMapIndex(level, dir);
             })
 
-			switch (action) {
-				case PlayerStatus.Walk_L:
+			switch (dir) {
+				case Direction.Left:
 					Position.x[player] = 25;
 					break;
-				case PlayerStatus.Walk_R:
+				case Direction.Right:
 					Position.x[player] = -1;
 					break;
-				case PlayerStatus.Walk_U:
+				case Direction.Up:
 					Position.y[player] = 16;
 					break;
-				case PlayerStatus.Walk_D:
+				case Direction.Down:
 					Position.y[player] = -1;
 					break;
 			}
-			target.status = action;
-			target.update = UpdateFlag.MoveTo;
+			target.dir = dir;
+			target.update = UpdateFlag.Direction;
         }
+		else if (next1 == SpriteType.Stairs) {
+			setStairsStatus(player, dir);
+		}
 		else {
-			if (getMapTile(player, PlayerStatus.None, 0) == SpriteType.Stairs) {
-				setStairsStatus(player, action);
+			if (getMapTile(player, dir, 0) == SpriteType.Stairs) {
+				setStairsStatus(player, dir);
 			}
 			else {
-				updateTween(player, action, Options.walk_duration);
-				Player.status[player] = action;
+				updateTween(player, dir, Options.walk_duration);
+				switch (dir) {
+					case Direction.Left:
+						Player.status[player] = PlayerStatus.Walk_L;
+						break;
+					case Direction.Right:
+						Player.status[player] = PlayerStatus.Walk_R;
+						break;
+					case Direction.Up:
+						Player.status[player] = PlayerStatus.Walk_U;
+						break;
+					case Direction.Down:
+						Player.status[player] = PlayerStatus.Walk_D;
+						break;
+					case Direction.None:
+						Player.status[player] = PlayerStatus.Idle;
+						break;
+                }
             }
         }
 	}
@@ -444,33 +437,23 @@ export default function createPlayerMovementSystem(tweens: Phaser.Tweens.TweenMa
 				target.update &= ~UpdateFlag.Status;
 			}
 
-			if ((target.update & UpdateFlag.MoveTo) == UpdateFlag.MoveTo) {
-				target.update &= ~UpdateFlag.MoveTo;
-				moveTo(world, player, target.status);
+			if ((target.update & UpdateFlag.Direction) == UpdateFlag.Direction) {
+				target.update &= ~UpdateFlag.Direction;
+				Input.direction[player] = target.dir;
 			}
-
-			if (target.update !== UpdateFlag.None) {
-				return world;
-            }
 
 			if (timeline.isPlaying()) {
 				target.dt = 0;
 			}
 			else {
 				target.dt += Options.time_delta;
-
-				switch (Input.direction[player]) {
+				const dir = Input.direction[player];
+				switch (dir) {
 					case Direction.Left:
-						moveTo(world, player, PlayerStatus.Walk_L);
-						break;
 					case Direction.Right:
-						moveTo(world, player, PlayerStatus.Walk_R);
-						break;
 					case Direction.Up:
-						moveTo(world, player, PlayerStatus.Walk_U);
-						break;
 					case Direction.Down:
-						moveTo(world, player, PlayerStatus.Walk_D);
+						moveTo(world, player, dir);
 						break;
 					default:
 						if (target.dt > Options.rest_timeout) {

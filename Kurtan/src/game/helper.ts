@@ -38,7 +38,7 @@ export function addTween(timeline: Phaser.Tweens.Timeline, config: object): Phas
 		const newTween = newTimeline.data[newTimeline.data.length - 1];
 
 		newTween.duration = timeline.elapsed - timeline.duration;
-		const progress = tween.elapsed / tween.duration;
+		const progress = (tween.duration + newTween.duration) / tween.duration;
 
 		for (let i = 0; i < tween.totalData; i++) {
 			updateTweenData(tween.data[i], progress);
