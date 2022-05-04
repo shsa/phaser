@@ -117,7 +117,7 @@ export default class GameScene extends Phaser.Scene {
         const game = addEntity(this.world);
         addComponent(this.world, Game, game);
         addComponent(this.world, Level, game);
-        Level.index[game] = 16;
+        Level.index[game] = 18;
 
         // create the systems
         this.levelLoaderSystem = createLevelLoaderSystem();
@@ -131,8 +131,8 @@ export default class GameScene extends Phaser.Scene {
         this.playerViewSystem = createPlayerViewSystem(this);
 
         this.cleanupSystem = createCleanupSystem();
-        this.tweens.timeScale = 0.2;
-        this.anims.globalTimeScale = 0.2
+    //    this.tweens.timeScale = 0.2;
+    //    this.anims.globalTimeScale = 0.2
     }
 
     update(t: number, dt: number) {

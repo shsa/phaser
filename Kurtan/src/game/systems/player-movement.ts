@@ -495,7 +495,7 @@ export default function createPlayerMovementSystem(tweens: Phaser.Tweens.TweenMa
             }
 		}
     }
-
+	let s = "";
 	return defineSystem((world) => {
 		playerEnterDemoQuery(world).forEach(player => {
 			timeline.destroy();
@@ -534,6 +534,21 @@ export default function createPlayerMovementSystem(tweens: Phaser.Tweens.TweenMa
 					case Direction.Right:
 					case Direction.Up:
 					case Direction.Down:
+						switch (dir) {
+							case Direction.Left:
+								s = s + ", 0";
+								break;
+							case Direction.Right:
+								s = s + ", 1";
+								break;
+							case Direction.Up:
+								s = s + ", 2";
+								break;
+							case Direction.Down:
+								s = s + ", 3";
+								break;
+						}
+						console.log(s);
 						moveTo(world, player, dir);
 						break;
 					default:
