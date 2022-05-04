@@ -418,7 +418,7 @@
     },
 
     {
-      "key": "walk_d_stairs_start",
+      "key": "walk_d_stairs_start0",
       "type": "frame",
       "frames": [
         {
@@ -430,44 +430,38 @@
           "key": "player",
           "frame": 14,
           "duration": 100
-        },
+        }
+      ]
+    },
+
+    {
+      "key": "walk_d_stairs_start1",
+      "type": "frame",
+      "frames": [
         {
           "key": "player",
           "frame": 41,
           "duration": 170
-        },
-        {
-          "key": "player",
-          "frame": 39,
-          "duration": 170
-        },
-        {
-          "key": "player",
-          "frame": 40,
-          "duration": 170
         }
-      ],
-
-      "frameRate": 25,
-      "duration": 0,
-      "skipMissedFrames": true,
-      "delay": 0,
-      "repeat": 0,
-      "repeatDelay": 0,
-      "yoyo": false,
-      "showOnStart": false,
-      "hideOnComplete": false
+      ]
     },
 
     {
-      "key": "walk_u_stairs_start",
+      "key": "walk_u_stairs_start0",
       "type": "frame",
       "frames": [
         {
           "key": "player",
           "frame": 36,
           "duration": 500
-        },
+        }
+      ]
+    },
+
+    {
+      "key": "walk_u_stairs_start1",
+      "type": "frame",
+      "frames": [
         {
           "key": "player",
           "frame": 39,
@@ -478,17 +472,7 @@
           "frame": 40,
           "duration": 255
         }
-      ],
-
-      "frameRate": 25,
-      "duration": 0,
-      "skipMissedFrames": true,
-      "delay": 0,
-      "repeat": 0,
-      "repeatDelay": 0,
-      "yoyo": false,
-      "showOnStart": false,
-      "hideOnComplete": false
+      ]
     },
 
     {
@@ -566,19 +550,21 @@
     },
 
     {
-      "key": "walk_u_stairs_end",
+      "key": "walk_u_stairs_end0",
       "type": "frame",
       "frames": [
         {
           "key": "player",
-          "frame": 37,
-          "duration": 150
-        },
-        {
-          "key": "player",
           "frame": 41,
-          "duration": 70
-        },
+          "duration": 150
+        }
+      ]
+    },
+
+    {
+      "key": "walk_u_stairs_end1",
+      "type": "frame",
+      "frames": [
         {
           "key": "player",
           "frame": 14,
@@ -594,99 +580,7 @@
           "frame": 18,
           "duration": 50
         }
-      ],
-
-      "frameRate": 25,
-      "duration": 0,
-      "skipMissedFrames": true,
-      "delay": 0,
-      "repeat": 0,
-      "repeatDelay": 0,
-      "yoyo": false,
-      "showOnStart": false,
-      "hideOnComplete": false
-    },
-
-    {
-      "key": "walk_d_stairs_end",
-      "type": "frame",
-      "frames": [
-        {
-          "key": "player",
-          "frame": 37,
-          "duration": 200
-        },
-        {
-          "key": "player",
-          "frame": 38,
-          "duration": 200
-        },
-        {
-          "key": "player",
-          "frame": 42,
-          "duration": 200
-        },
-        {
-          "key": "player",
-          "frame": 43,
-          "duration": 200
-        },
-        {
-          "key": "player",
-          "frame": 42,
-          "duration": 200
-        },
-        {
-          "key": "player",
-          "frame": 43,
-          "duration": 200
-        },
-        {
-          "key": "player",
-          "frame": 44,
-          "duration": 200
-        },
-        {
-          "key": "player",
-          "frame": 45,
-          "duration": 200
-        },
-        {
-          "key": "player",
-          "frame": 44,
-          "duration": 200
-        },
-        {
-          "key": "player",
-          "frame": 45,
-          "duration": 200
-        },
-        {
-          "key": "player",
-          "frame": 36,
-          "duration": 400
-        },
-        {
-          "key": "player",
-          "frame": 23,
-          "duration": 200
-        },
-        {
-          "key": "player",
-          "frame": 12,
-          "duration": 100
-        }
-      ],
-
-      "frameRate": 25,
-      "duration": 0,
-      "skipMissedFrames": true,
-      "delay": 0,
-      "repeat": 0,
-      "repeatDelay": 0,
-      "yoyo": false,
-      "showOnStart": false,
-      "hideOnComplete": false
+      ]
     },
 
     {

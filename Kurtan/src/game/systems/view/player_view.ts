@@ -60,8 +60,8 @@ export default function createPlayerViewSystem(scene: GameScene) {
 		for (let i = 0; i < entities.length; ++i) {
 			const id = entities[i];
 
-			scene.position_x.setText("x: " + Position.x[id]);
-			scene.position_y.setText("y: " + Position.y[id]);
+			scene.position_x.setText("x: " + Position.x[id].toFixed(1));
+			scene.position_y.setText("y: " + Position.y[id].toFixed(1));
 
 			const sprite = spritesById.get(id);
 			if (!sprite) {
@@ -107,11 +107,17 @@ export default function createPlayerViewSystem(scene: GameScene) {
 					play(sprite, "push-d", duration);
 					break;
 
-				case PlayerStatus.Walk_U_Stairs_Start:
-					play(sprite, "walk_u_stairs_start", duration);
+				case PlayerStatus.Walk_U_Stairs_Start0:
+					play(sprite, "walk_u_stairs_start0", duration);
 					break;
-				case PlayerStatus.Walk_D_Stairs_Start:
-					play(sprite, "walk_d_stairs_start", duration);
+				case PlayerStatus.Walk_U_Stairs_Start1:
+					play(sprite, "walk_u_stairs_start1", duration);
+					break;
+				case PlayerStatus.Walk_D_Stairs_Start0:
+					play(sprite, "walk_d_stairs_start0", duration);
+					break;
+				case PlayerStatus.Walk_D_Stairs_Start1:
+					play(sprite, "walk_d_stairs_start1", duration);
 					break;
 				case PlayerStatus.Walk_U_Stairs:
 					play(sprite, "walk_u_stairs", duration);
@@ -119,8 +125,11 @@ export default function createPlayerViewSystem(scene: GameScene) {
 				case PlayerStatus.Walk_D_Stairs:
 					play(sprite, "walk_d_stairs", duration);
 					break;
-				case PlayerStatus.Walk_U_Stairs_End:
-					play(sprite, "walk_u_stairs_end", duration);
+				case PlayerStatus.Walk_U_Stairs_End0:
+					play(sprite, "walk_u_stairs_end0", duration);
+					break;
+				case PlayerStatus.Walk_U_Stairs_End1:
+					play(sprite, "walk_u_stairs_end1", duration);
 					break;
 				case PlayerStatus.Walk_D_Stairs_End0:
 					play(sprite, "walk_d_stairs_end0", duration);
@@ -129,7 +138,7 @@ export default function createPlayerViewSystem(scene: GameScene) {
 					play(sprite, "walk_d_stairs_end1", duration);
 					break;
 				case PlayerStatus.Walk_D_Stairs_End2:
-					play(sprite, "walk_d_stairs_end0", duration);
+					play(sprite, "walk_d_stairs_end2", duration);
 					break;
 			}
 

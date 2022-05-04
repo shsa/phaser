@@ -139,24 +139,32 @@ export default function createPlayerMovementSystem(tweens: Phaser.Tweens.TweenMa
 
 		if (cur == SpriteType.Space) {
 			if (dir == Direction.Up) {
-				target.x = x + offset.x * 0.6;
-				target.y = y + offset.y * 0.6;
-				Player.status[player] = PlayerStatus.Walk_U_Stairs_Start;
-
 				timeline.add({
 					targets: target,
-					duration: Options.walk_stairs_start * 0.5,
+					duration: Options.walk_duration * 0.7,
 					x: target.x,
 					y: target.y,
-					repeat: 0
+					repeat: 0,
+					onStart: function (t: Phaser.Tweens.Tween) {
+						target.status = PlayerStatus.Walk_U_Stairs_Start0;
+						target.duration = t.duration;
+						target.update = UpdateFlag.Status;
+                    }
 				});
 
 				timeline.add({
 					targets: target,
-					duration: Options.walk_stairs_start * 0.5,
+					duration: Options.walk_duration * 0.5,
 					x: x + offset.x,
 					y: y + offset.y,
 					repeat: 0,
+					onStart: function (t: Phaser.Tweens.Tween) {
+						target.x = x + offset.x * 0.5;
+						target.y = y + offset.y * 0.5;
+						target.status = PlayerStatus.Walk_U_Stairs_Start1;
+						target.duration = t.duration;
+						target.update = UpdateFlag.Status | UpdateFlag.Position;
+                    },
 					onUpdate: function () {
 						target.update = UpdateFlag.Position;
 					},
@@ -168,24 +176,45 @@ export default function createPlayerMovementSystem(tweens: Phaser.Tweens.TweenMa
 				});
 			}
 			else {
-				target.x = x + offset.x * 0.4;
-				target.y = y + offset.y * 0.4;
-				Player.status[player] = PlayerStatus.Walk_D_Stairs_Start;
-
 				timeline.add({
 					targets: target,
-					duration: Options.walk_stairs_start * 0.3,
-					x: target.x,
-					y: target.y,
-					repeat: 0
+					duration: Options.walk_duration * 0.5,
+					x: x,
+					y: y,
+					repeat: 0,
+					onStart: function (t: Phaser.Tweens.Tween) {
+						target.status = PlayerStatus.Walk_D_Stairs_Start0;
+						target.duration = t.duration;
+						target.update = UpdateFlag.Status;
+                    }
 				});
 
 				timeline.add({
 					targets: target,
-					duration: Options.walk_stairs_start * 0.7,
+					duration: Options.walk_duration * 0.3,
+					x: x + offset.x * 0.5,
+					y: y + offset.y * 0.5,
+					repeat: 0,
+					onStart: function (t: Phaser.Tweens.Tween) {
+						target.x = x + offset.x * 0.5;
+						target.y = y + offset.y * 0.5;
+						target.status = PlayerStatus.Walk_D_Stairs_Start1;
+						target.duration = t.duration;
+						target.update = UpdateFlag.Status | UpdateFlag.Position;
+					}
+				});
+
+				timeline.add({
+					targets: target,
+					duration: Options.walk_duration * 0.5,
 					x: x + offset.x,
 					y: y + offset.y,
 					repeat: 0,
+					onStart: function (t: Phaser.Tweens.Tween) {
+						target.status = PlayerStatus.Walk_D_Stairs;
+						target.duration = Options.walk_duration;
+						target.update = UpdateFlag.Status;
+                    },
 					onUpdate: function () {
 						target.update = UpdateFlag.Position;
 					},
@@ -224,10 +253,15 @@ export default function createPlayerMovementSystem(tweens: Phaser.Tweens.TweenMa
 				if (dir == Direction.Up) {
 					timeline.add({
 						targets: target,
-						duration: Options.walk_stairs_end * 0.15,
+						duration: Options.walk_duration * 0.5,
 						x: x + offset.x * 0.5,
 						y: y + offset.y * 0.5,
 						repeat: 0,
+						onStart: function (t: Phaser.Tweens.Tween) {
+							target.status = PlayerStatus.Walk_U_Stairs;
+							target.duration = Options.walk_duration;
+							target.update = UpdateFlag.Status;
+                        },
 						onUpdate: function () {
 							target.update = UpdateFlag.Position;
 						}
@@ -235,37 +269,42 @@ export default function createPlayerMovementSystem(tweens: Phaser.Tweens.TweenMa
 
 					timeline.add({
 						targets: target,
-						duration: Options.walk_stairs_end * 0.35,
+						duration: Options.walk_duration * 0.35,
 						x: x + offset.x * 0.5,
 						y: y + offset.y * 0.5,
-						repeat: 0
+						repeat: 0,
+						onStart: function (t: Phaser.Tweens.Tween) {
+							target.status = PlayerStatus.Walk_U_Stairs_End0;
+							target.duration = t.duration;
+							target.update = UpdateFlag.Status;
+                        }
 					});
 
 					timeline.add({
 						targets: target,
-						duration: Options.walk_stairs_end * 0.5,
+						duration: Options.walk_duration * 0.5,
 						x: x + offset.x,
 						y: y + offset.y,
 						repeat: 0,
-						onStart: function () {
+						onStart: function (t: Phaser.Tweens.Tween) {
 							target.x = x + offset.x;
 							target.y = y + offset.y;
-						},
-						onUpdate: function () {
-							target.update = UpdateFlag.Position;
+							target.status = PlayerStatus.Walk_U_Stairs_End1;
+							target.duration = t.duration;
+							target.update = UpdateFlag.Position | UpdateFlag.Status;
 						}
 					});
-					Player.status[player] = PlayerStatus.Walk_U_Stairs_End;
 				}
 				else {
 					timeline.add({
 						targets: target,
-						duration: Options.walk_stairs_end * 0.2,
+						duration: Options.walk_duration * 0.6,
 						x: x + offset.x * 0.6,
 						y: y + offset.y * 0.6,
 						repeat: 0,
-						onStart: function () {
+						onStart: function (t: Phaser.Tweens.Tween) {
 							target.status = PlayerStatus.Walk_D_Stairs;
+							target.duration = t.duration;
 							target.update = UpdateFlag.Status;
                         },
 						onUpdate: function () {
@@ -275,19 +314,20 @@ export default function createPlayerMovementSystem(tweens: Phaser.Tweens.TweenMa
 
 					timeline.add({
 						targets: target,
-						duration: Options.walk_stairs_end * 0.6,
+						duration: Options.walk_duration * 0.5,
 						x: x + offset.x * 0.6,
 						y: y + offset.y * 0.6,
 						repeat: 0,
-						onStart: function () {
+						onStart: function (t: Phaser.Tweens.Tween) {
 							target.status = PlayerStatus.Walk_D_Stairs_End0;
+							target.duration = t.duration;
 							target.update = UpdateFlag.Status;
                         }
 					});
 
 					timeline.add({
 						targets: target,
-						duration: Options.walk_stairs_end * 0.2,
+						duration: Options.walk_duration * 0.5,
 						x: x + offset.x,
 						y: y + offset.y,
 						repeat: 0,
@@ -305,14 +345,14 @@ export default function createPlayerMovementSystem(tweens: Phaser.Tweens.TweenMa
 
 					timeline.add({
 						targets: target,
-						duration: Options.walk_stairs_end * 0.2,
+						duration: Options.walk_duration * 0.2,
 						x: x + offset.x,
 						y: y + offset.y,
 						repeat: 0,
 						onStart: function (t: Phaser.Tweens.Tween) {
 							target.x = x + offset.x;
 							target.y = y + offset.y;
-							target.status = PlayerStatus.Walk_D_Stairs_End1;
+							target.status = PlayerStatus.Walk_D_Stairs_End2;
 							target.duration = t.duration;
 							target.update = UpdateFlag.Position | UpdateFlag.Status;
 						},

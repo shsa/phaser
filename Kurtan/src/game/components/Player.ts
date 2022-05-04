@@ -25,11 +25,14 @@ export enum PlayerStatus {
     Push_U,
     Push_D,
 
-    Walk_U_Stairs_Start,
+    Walk_U_Stairs_Start0,
+    Walk_U_Stairs_Start1,
     Walk_U_Stairs,
-    Walk_U_Stairs_End,
+    Walk_U_Stairs_End0,
+    Walk_U_Stairs_End1,
 
-    Walk_D_Stairs_Start,
+    Walk_D_Stairs_Start0,
+    Walk_D_Stairs_Start1,
     Walk_D_Stairs,
     Walk_D_Stairs_End0,
     Walk_D_Stairs_End1,
