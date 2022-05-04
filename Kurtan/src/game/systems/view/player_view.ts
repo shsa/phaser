@@ -6,11 +6,12 @@ import {
 	exitQuery
 } from 'bitecs';
 
+import GameScene from '@/game/scenes/GameScene';
 import Player, { PlayerStatus } from '@/game/components/Player';
 import Position from '@/game/components/Position';
 import Options from '@/game/Options';
 
-export default function createPlayerViewSystem(scene: Phaser.Scene) {
+export default function createPlayerViewSystem(scene: GameScene) {
 	const spritesById = new Map<number, Phaser.GameObjects.Sprite>();
 
 	const playerQuery = defineQuery([Player, Position]);
@@ -59,6 +60,9 @@ export default function createPlayerViewSystem(scene: Phaser.Scene) {
 		for (let i = 0; i < entities.length; ++i) {
 			const id = entities[i];
 
+			scene.position_x.setText("x: " + Position.x[id]);
+			scene.position_y.setText("y: " + Position.y[id]);
+
 			const sprite = spritesById.get(id);
 			if (!sprite) {
 				// log an error
@@ -66,6 +70,7 @@ export default function createPlayerViewSystem(scene: Phaser.Scene) {
 			}
 
 			const status = Player.status[id];
+			const duration = Player.duration[id];
 			switch (status) {
 				case PlayerStatus.None:
 					//sprite.anims.stop();
@@ -77,48 +82,54 @@ export default function createPlayerViewSystem(scene: Phaser.Scene) {
 					play(sprite, "rest");
 					break;
 				case PlayerStatus.Walk_L:
-					play(sprite, "walk-l", Options.walk_duration);
+					play(sprite, "walk-l", duration);
 					break;
 				case PlayerStatus.Walk_R:
-					play(sprite, "walk-r", Options.walk_duration);
+					play(sprite, "walk-r", duration);
 					break;
 				case PlayerStatus.Walk_U:
-					play(sprite, "walk-u", Options.walk_duration);
+					play(sprite, "walk-u", duration);
 					break;
 				case PlayerStatus.Walk_D:
-					play(sprite, "walk-d", Options.walk_duration);
+					play(sprite, "walk-d", duration);
 					break;
 
 				case PlayerStatus.Push_L:
-					play(sprite, "push-l", Options.walk_duration);
+					play(sprite, "push-l", duration);
 					break;
 				case PlayerStatus.Push_R:
-					play(sprite, "push-r", Options.walk_duration);
+					play(sprite, "push-r", duration);
 					break;
 				case PlayerStatus.Push_U:
-					play(sprite, "push-u", Options.walk_duration);
+					play(sprite, "push-u", duration);
 					break;
 				case PlayerStatus.Push_D:
-					play(sprite, "push-d", Options.walk_duration);
+					play(sprite, "push-d", duration);
 					break;
 
 				case PlayerStatus.Walk_U_Stairs_Start:
-					play(sprite, "walk_u_stairs_start", Options.walk_stairs_start);
+					play(sprite, "walk_u_stairs_start", duration);
 					break;
 				case PlayerStatus.Walk_D_Stairs_Start:
-					play(sprite, "walk_d_stairs_start", Options.walk_stairs_start);
+					play(sprite, "walk_d_stairs_start", duration);
 					break;
 				case PlayerStatus.Walk_U_Stairs:
-					play(sprite, "walk_u_stairs", Options.walk_duration);
+					play(sprite, "walk_u_stairs", duration);
 					break;
 				case PlayerStatus.Walk_D_Stairs:
-					play(sprite, "walk_d_stairs", Options.walk_duration);
+					play(sprite, "walk_d_stairs", duration);
 					break;
 				case PlayerStatus.Walk_U_Stairs_End:
-					play(sprite, "walk_u_stairs_end", Options.walk_stairs_end);
+					play(sprite, "walk_u_stairs_end", duration);
 					break;
-				case PlayerStatus.Walk_D_Stairs_End:
-					play(sprite, "walk_d_stairs_end", Options.walk_stairs_end);
+				case PlayerStatus.Walk_D_Stairs_End0:
+					play(sprite, "walk_d_stairs_end0", duration);
+					break;
+				case PlayerStatus.Walk_D_Stairs_End1:
+					play(sprite, "walk_d_stairs_end1", duration);
+					break;
+				case PlayerStatus.Walk_D_Stairs_End2:
+					play(sprite, "walk_d_stairs_end0", duration);
 					break;
 			}
 

@@ -50,6 +50,9 @@ export default class GameScene extends Phaser.Scene {
 
     private cleanupSystem!: System;
 
+    public position_x!: Phaser.GameObjects.Text;
+    public position_y!: Phaser.GameObjects.Text;
+
     constructor() {
         super("game");
     }
@@ -76,6 +79,12 @@ export default class GameScene extends Phaser.Scene {
         this.load.spritesheet("door", "/assets/door.png", { frameWidth: Options.tile_width, frameHeight: Options.tile_height, spacing: 1 });
         this.game.events.on(Phaser.Core.Events.BLUR, this.onBlur, this);
         this.game.events.on(Phaser.Core.Events.FOCUS, this.onFocus, this);
+
+        this.position_x = this.add.text(10, 320, "test");
+        this.position_x.depth = 100;
+
+        this.position_y = this.add.text(100, 320, "test");
+        this.position_y.depth = 100;
     }
 
     onBlur() {
@@ -108,7 +117,7 @@ export default class GameScene extends Phaser.Scene {
         const game = addEntity(this.world);
         addComponent(this.world, Game, game);
         addComponent(this.world, Level, game);
-        Level.index[game] = 18;
+        Level.index[game] = 17;
 
         // create the systems
         this.levelLoaderSystem = createLevelLoaderSystem();

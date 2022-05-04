@@ -44,6 +44,7 @@ export default function createPlayerMovementSystem(tweens: Phaser.Tweens.TweenMa
 		end_y: 0,
 		dt: 0,
 		status: PlayerStatus.None,
+		duration: 0,
 		dir: Direction.None,
 		update: UpdateFlag.None,
 	};
@@ -103,6 +104,7 @@ export default function createPlayerMovementSystem(tweens: Phaser.Tweens.TweenMa
 	}
 
 	function setPushStatus(player: number, dir: Direction) {
+		Player.status[player] = Options.walk_duration;
 		switch (dir) {
 			case Direction.Left:
 				Player.status[player] = PlayerStatus.Push_L;
@@ -262,6 +264,10 @@ export default function createPlayerMovementSystem(tweens: Phaser.Tweens.TweenMa
 						x: x + offset.x * 0.6,
 						y: y + offset.y * 0.6,
 						repeat: 0,
+						onStart: function () {
+							target.status = PlayerStatus.Walk_D_Stairs;
+							target.update = UpdateFlag.Status;
+                        },
 						onUpdate: function () {
 							target.update = UpdateFlag.Position;
                         }
@@ -272,7 +278,11 @@ export default function createPlayerMovementSystem(tweens: Phaser.Tweens.TweenMa
 						duration: Options.walk_stairs_end * 0.6,
 						x: x + offset.x * 0.6,
 						y: y + offset.y * 0.6,
-						repeat: 0
+						repeat: 0,
+						onStart: function () {
+							target.status = PlayerStatus.Walk_D_Stairs_End0;
+							target.update = UpdateFlag.Status;
+                        }
 					});
 
 					timeline.add({
@@ -281,11 +291,35 @@ export default function createPlayerMovementSystem(tweens: Phaser.Tweens.TweenMa
 						x: x + offset.x,
 						y: y + offset.y,
 						repeat: 0,
+						onStart: function (t: Phaser.Tweens.Tween) {
+							target.x = x + offset.x;
+							target.y = y + offset.y;
+							target.status = PlayerStatus.Walk_D_Stairs_End1;
+							target.duration = t.duration;
+							target.update = UpdateFlag.Position | UpdateFlag.Status;
+                        },
 						onUpdate: function () {
 							target.update = UpdateFlag.Position;
 						}
 					});
-					Player.status[player] = PlayerStatus.Walk_D_Stairs_End;
+
+					timeline.add({
+						targets: target,
+						duration: Options.walk_stairs_end * 0.2,
+						x: x + offset.x,
+						y: y + offset.y,
+						repeat: 0,
+						onStart: function (t: Phaser.Tweens.Tween) {
+							target.x = x + offset.x;
+							target.y = y + offset.y;
+							target.status = PlayerStatus.Walk_D_Stairs_End1;
+							target.duration = t.duration;
+							target.update = UpdateFlag.Position | UpdateFlag.Status;
+						},
+						onUpdate: function () {
+							target.update = UpdateFlag.Position;
+						}
+					});
 				}
             }
         }
@@ -372,6 +406,7 @@ export default function createPlayerMovementSystem(tweens: Phaser.Tweens.TweenMa
 			}
 			else {
 				updateTween(player, dir, Options.walk_duration);
+				Player.duration[player] = Options.walk_duration;
 				switch (dir) {
 					case Direction.Left:
 						Player.status[player] = PlayerStatus.Walk_L;
@@ -439,6 +474,7 @@ export default function createPlayerMovementSystem(tweens: Phaser.Tweens.TweenMa
 
 			if ((target.update & UpdateFlag.Status) == UpdateFlag.Status) {
 				Player.status[player] = target.status;
+				Player.duration[player] = target.duration;
 				target.update &= ~UpdateFlag.Status;
 			}
 

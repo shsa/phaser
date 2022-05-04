@@ -31,7 +31,9 @@ export enum PlayerStatus {
 
     Walk_D_Stairs_Start,
     Walk_D_Stairs,
-    Walk_D_Stairs_End
+    Walk_D_Stairs_End0,
+    Walk_D_Stairs_End1,
+    Walk_D_Stairs_End2
 }
 
 export function getDirection(status: PlayerStatus): Direction {
@@ -45,7 +47,8 @@ export function getDirection(status: PlayerStatus): Direction {
 }
 
 export const Player = defineComponent({
-    status: Types.ui8
+    status: Types.ui8,
+    duration: Types.f32
 });
 
 export default Player;

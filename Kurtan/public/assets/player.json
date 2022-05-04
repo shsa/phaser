@@ -687,6 +687,82 @@
       "yoyo": false,
       "showOnStart": false,
       "hideOnComplete": false
+    },
+
+    {
+      "key": "walk_d_stairs_end0",
+      "type": "frame",
+      "frames": [
+        {
+          "key": "player",
+          "frame": 42,
+          "duration": 200
+        },
+        {
+          "key": "player",
+          "frame": 43,
+          "duration": 200
+        },
+        {
+          "key": "player",
+          "frame": 42,
+          "duration": 200
+        },
+        {
+          "key": "player",
+          "frame": 43,
+          "duration": 200
+        },
+        {
+          "key": "player",
+          "frame": 44,
+          "duration": 200
+        },
+        {
+          "key": "player",
+          "frame": 45,
+          "duration": 200
+        },
+        {
+          "key": "player",
+          "frame": 44,
+          "duration": 200
+        },
+        {
+          "key": "player",
+          "frame": 45,
+          "duration": 200
+        }
+      ]
+    },
+
+    {
+      "key": "walk_d_stairs_end1",
+      "type": "frame",
+      "frames": [
+        {
+          "key": "player",
+          "frame": 36,
+          "duration": 400
+        }
+      ]
+    },
+
+    {
+      "key": "walk_d_stairs_end2",
+      "type": "frame",
+      "frames": [
+        {
+          "key": "player",
+          "frame": 23,
+          "duration": 200
+        },
+        {
+          "key": "player",
+          "frame": 12,
+          "duration": 100
+        }
+      ]
     }
   ],
   "globalTimeScale": 1
