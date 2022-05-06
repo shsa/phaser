@@ -76,6 +76,14 @@ export default function createEntityViewSystem(scene: Phaser.Scene) {
 				return play(sprite, "placed");
 			case SpriteType.BoxMoney:
 				return play(sprite, "box_money");
+			case SpriteType.BoxEmpty:
+				return play(sprite, "box_empty");
+			case SpriteType.BoxOpen:
+				return play(sprite, "box_open", Options.box_open);
+			case SpriteType.BoxOpened:
+				return play(sprite, "box_opened");
+			case SpriteType.BoxTake:
+				return play(sprite, "box_take");
 		}
     }
 

@@ -5,8 +5,9 @@ const Options = {
     time_delta: 0,
 
     walk_duration: 250,
-    walk_stairs_start: 500,
-    walk_stairs_end: 1000,
+    box_open: 1000,
+    box_take: 2000,
+    applause_duration: 2000,
     idle_timeout: 2000,
     rest_timeout: 15000,
 

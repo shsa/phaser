@@ -64,8 +64,114 @@
       "yoyo": false,
       "showOnStart": false,
       "hideOnComplete": false
-    }
+    },
 
+    {
+      "key": "box_open",
+      "type": "frame",
+      "frames": [
+        {
+          "key": "box",
+          "frame": 3,
+          "duration": 100
+        },
+        {
+          "key": "box",
+          "frame": 4,
+          "duration": 100
+        },
+        {
+          "key": "box",
+          "frame": 5,
+          "duration": 100
+        },
+        {
+          "key": "box",
+          "frame": 6,
+          "duration": 100
+        },
+        {
+          "key": "box",
+          "frame": 7,
+          "duration": 100
+        },
+        {
+          "key": "box",
+          "frame": 8,
+          "duration": 100
+        },
+        {
+          "key": "box",
+          "frame": 9,
+          "duration": 100
+        },
+        {
+          "key": "box",
+          "frame": 10,
+          "duration": 100
+        },
+        {
+          "key": "box",
+          "frame": 11,
+          "duration": 100
+        },
+        {
+          "key": "box",
+          "frame": 12,
+          "duration": 100
+        }
+      ],
+      "repeat": 0
+    },
+
+    {
+      "key": "box_opened",
+      "type": "frame",
+      "frames": [
+        {
+          "key": "box",
+          "frame": 13,
+          "duration": 100
+        }
+      ],
+      "repeat": 0
+    },
+
+    {
+      "key": "box_empty",
+      "type": "frame",
+      "frames": [
+        {
+          "key": "box",
+          "frame": 14,
+          "duration": 100
+        }
+      ],
+      "repeat": 0
+    },
+
+    {
+      "key": "box_take",
+      "type": "frame",
+      "frames": [
+        {
+          "key": "box",
+          "frame": 15,
+          "duration": 100
+        },
+        {
+          "key": "box",
+          "frame": 16,
+          "duration": 100
+        },
+        {
+          "key": "box",
+          "frame": 17,
+          "duration": 100
+        }
+      ],
+      "repeat": -1
+    }
   ],
   "globalTimeScale": 1
 }

@@ -657,7 +657,63 @@
           "duration": 100
         }
       ]
+    },
+
+    {
+      "key": "applause",
+      "type": "frame",
+      "frames": [
+        {
+          "key": "player",
+          "frame": 48,
+          "duration": 100
+        },
+        {
+          "key": "player",
+          "frame": 49,
+          "duration": 100
+        }
+      ],
+      "repeat": -1
+    },
+
+    {
+      "key": "smile",
+      "type": "frame",
+      "frames": [
+        {
+          "key": "player",
+          "frame": 50,
+          "duration": 200
+        }
+      ]
+    },
+
+    {
+      "key": "hidden",
+      "type": "frame",
+      "frames": [
+        {
+          "key": "player",
+          "frame": 17,
+          "duration": 100
+        }
+      ],
+      "repeat": -1
+    },
+
+    {
+      "key": "with_money",
+      "type": "frame",
+      "frames": [
+        {
+          "key": "player",
+          "frame": 16,
+          "duration": 100
+        }
+      ],
+      "repeat": 0
     }
-  ],
+],
   "globalTimeScale": 1
 }

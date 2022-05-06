@@ -61,15 +61,13 @@ export default function createDemoSystem(tweens: Phaser.Tweens.TweenManager, ani
         })
     }
 
-	function endDemo(world: IWorld) {
-		const entities = exitDemoQuery(world);
-		for (let i = 0; i < entities.length; i++) {
-			const player = entities[i];
+	function endDemo(world: IWorld, player: number) {
+		if (hasComponent(world, PlayDemo, player)) {
 			removeComponent(world, PlayDemo, player);
+        }
 
-			tweens.timeScale = 1;
-			anims.globalTimeScale = 1;
-		}
+		tweens.timeScale = 1;
+		anims.globalTimeScale = 1;
     }
 
 	function getDirection(index: number): Direction {
@@ -88,16 +86,11 @@ export default function createDemoSystem(tweens: Phaser.Tweens.TweenManager, ani
     }
 
 	function updateDemo(world: IWorld) {
-		const entities = demoQuery(world);
-		for (let i = 0; i < entities.length; i++) {
-			const player = entities[i];
+		demoQuery(world).forEach(player => {
+			const x = Math.round(Position.x[player]);
+			const y = Math.round(Position.y[player]);
 
 			if (demo.index < demo.steps.length) {
-				const x = Math.round(Position.x[player]);
-				const y = Math.round(Position.y[player]);
-				//const x = GridPosition.x[player];
-				//const y = GridPosition.y[player];
-
 				if (demo.x == x && demo.y == y) {
 					demo.index += 1;
 					demo.dir = getDirection(demo.steps[demo.index]);
@@ -109,17 +102,19 @@ export default function createDemoSystem(tweens: Phaser.Tweens.TweenManager, ani
 				}
 				else {
 					Input.direction[player] = demo.dir;
-				} 
+				}
 			}
 			else {
-				removeComponent(world, PlayDemo, player); 
-            }
-        }
+				if (x == Position.x[player] && y == Position.y[player]) {
+					endDemo(world, player);
+				}
+			}
+		});
     }
 
 	return defineSystem((world) => {
 
-		endDemo(world);
+		exitDemoQuery(world).forEach(player => endDemo(world, player));
 		startDemo(world);
 		updateDemo(world);
 

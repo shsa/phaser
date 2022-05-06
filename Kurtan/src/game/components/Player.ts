@@ -7,6 +7,7 @@ export enum PlayerStatus {
     Start,
 
     Idle,
+    Hidden,
 
     Rest,
 
@@ -36,7 +37,11 @@ export enum PlayerStatus {
     Walk_D_Stairs,
     Walk_D_Stairs_End0,
     Walk_D_Stairs_End1,
-    Walk_D_Stairs_End2
+    Walk_D_Stairs_End2,
+
+    Applause,
+    Smile,
+    WithMoney
 }
 
 export function getDirection(status: PlayerStatus): Direction {

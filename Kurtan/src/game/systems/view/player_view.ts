@@ -78,6 +78,9 @@ export default function createPlayerViewSystem(scene: GameScene) {
 				case PlayerStatus.Idle:
 					play(sprite, "idle");
 					break;
+				case PlayerStatus.Hidden:
+					play(sprite, "hidden");
+					break;
 				case PlayerStatus.Rest:
 					play(sprite, "rest");
 					break;
@@ -139,6 +142,16 @@ export default function createPlayerViewSystem(scene: GameScene) {
 					break;
 				case PlayerStatus.Walk_D_Stairs_End2:
 					play(sprite, "walk_d_stairs_end2", duration);
+					break;
+
+				case PlayerStatus.Applause:
+					play(sprite, "applause");
+					break;
+				case PlayerStatus.Smile:
+					play(sprite, "smile");
+					break;
+				case PlayerStatus.WithMoney:
+					play(sprite, "with_money");
 					break;
 			}
 

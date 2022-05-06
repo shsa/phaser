@@ -1,4 +1,4 @@
-import Phaser from 'phaser';
+import Phaser, { Time } from 'phaser';
 import {
 	defineSystem,
 	defineQuery,
@@ -36,6 +36,7 @@ export default function createPlayerMovementSystem(tweens: Phaser.Tweens.TweenMa
 	const touchableQuery = defineQuery([Touchable, Position]);
 
 	const target = {
+		i: 0,
 		x: 0,
 		y: 0,
 		start_x: 0,
@@ -52,6 +53,16 @@ export default function createPlayerMovementSystem(tweens: Phaser.Tweens.TweenMa
 	let timeline: Phaser.Tweens.Timeline = tweens.createTimeline();
 
 	const map = new LevelMap();
+	const map_info = {
+		completed: false,
+		box_money: 0,
+		box_type: SpriteType.None
+	};
+
+	function timeline_clear() {
+		timeline.destroy();
+		timeline = tweens.timeline();
+    }
 
 	function updateTween(player: number, dir: Direction, duration: number) {
 		if (dir != target.dir) {
@@ -134,14 +145,14 @@ export default function createPlayerMovementSystem(tweens: Phaser.Tweens.TweenMa
 		const cur = map.get(x, y);
 		const next = map.get(x + offset.x, y + offset.y);
 
-		timeline.destroy();
+		timeline_clear();
 		timeline = tweens.timeline();
 
 		if (cur == SpriteType.Space) {
 			if (dir == Direction.Up) {
 				timeline.add({
 					targets: target,
-					duration: Options.walk_duration * 0.7,
+					duration: Options.walk_duration * 2,
 					x: target.x,
 					y: target.y,
 					repeat: 0,
@@ -154,7 +165,7 @@ export default function createPlayerMovementSystem(tweens: Phaser.Tweens.TweenMa
 
 				timeline.add({
 					targets: target,
-					duration: Options.walk_duration * 0.5,
+					duration: Options.walk_duration,
 					x: x + offset.x,
 					y: y + offset.y,
 					repeat: 0,
@@ -169,7 +180,7 @@ export default function createPlayerMovementSystem(tweens: Phaser.Tweens.TweenMa
 						target.update = UpdateFlag.Position;
 					},
 					onComplete: function () {
-						timeline.destroy();
+						timeline_clear();
 						target.dir = dir;
 						target.update = UpdateFlag.Direction;
 					}
@@ -178,7 +189,7 @@ export default function createPlayerMovementSystem(tweens: Phaser.Tweens.TweenMa
 			else {
 				timeline.add({
 					targets: target,
-					duration: Options.walk_duration * 0.5,
+					duration: Options.walk_duration,
 					x: x,
 					y: y,
 					repeat: 0,
@@ -219,7 +230,7 @@ export default function createPlayerMovementSystem(tweens: Phaser.Tweens.TweenMa
 						target.update = UpdateFlag.Position;
 					},
 					onComplete: function () {
-						timeline.destroy();
+						timeline_clear();
 						target.dir = dir;
 						target.update = UpdateFlag.Direction;
 					}
@@ -237,7 +248,7 @@ export default function createPlayerMovementSystem(tweens: Phaser.Tweens.TweenMa
 						target.update = UpdateFlag.Position;
 					},
 					onComplete: function () {
-						timeline.destroy();
+						timeline_clear();
 						target.dir = dir;
 						target.update = UpdateFlag.Direction;
 					}
@@ -314,7 +325,7 @@ export default function createPlayerMovementSystem(tweens: Phaser.Tweens.TweenMa
 
 					timeline.add({
 						targets: target,
-						duration: Options.walk_duration * 0.5,
+						duration: Options.walk_duration * 2,
 						x: x + offset.x * 0.6,
 						y: y + offset.y * 0.6,
 						repeat: 0,
@@ -327,7 +338,7 @@ export default function createPlayerMovementSystem(tweens: Phaser.Tweens.TweenMa
 
 					timeline.add({
 						targets: target,
-						duration: Options.walk_duration * 0.5,
+						duration: Options.walk_duration * 2,
 						x: x + offset.x,
 						y: y + offset.y,
 						repeat: 0,
@@ -381,14 +392,15 @@ export default function createPlayerMovementSystem(tweens: Phaser.Tweens.TweenMa
         }
     }
 
-	function moveTo(world: IWorld, player: number, dir: Direction) {
+	function moveTo(world: IWorld, player: number, dir: Direction): boolean {
 		if (timeline.isPlaying()) {
-			return;
+			return false;
 		}
 
 		const next1 = getMapTile(player, dir, 1);
 		if (next1 == SpriteType.Wall) {
 			setPushStatus(player, dir);
+			return false;
 		}
 		else if (next1 == SpriteType.BoxNormal) {
 			if (getMapTile(player, dir, 2) == SpriteType.Space) {
@@ -399,13 +411,33 @@ export default function createPlayerMovementSystem(tweens: Phaser.Tweens.TweenMa
 				}
 				Input.direction[tile] = Input.direction[player];
 				setPushStatus(player, dir);
+				return true;
 			}
 			else {
 				setPushStatus(player, dir);
+				return false;
 			}
 		}
+		else if (next1 == SpriteType.BoxOpened) {
+			target.status = PlayerStatus.Hidden;
+			target.update = UpdateFlag.Status;
+
+			timeline_clear();
+			timeline.add({
+				targets: target,
+				i: 0,
+				duration: Options.box_take,
+				onComplete: function () {
+					target.status = PlayerStatus.WithMoney;
+					target.update = UpdateFlag.Status;
+                }
+			});
+			timeline.play();
+			return false;
+        }
 		else if (next1 == SpriteType.DoorClosed) {
 			setPushStatus(player, dir);
+			return false;
 		}
 		else if (next1 == SpriteType.Out)
 		{
@@ -433,16 +465,19 @@ export default function createPlayerMovementSystem(tweens: Phaser.Tweens.TweenMa
 			target.dir = dir;
 			target.x = Position.x[player];
 			target.y = Position.y[player];
-			timeline.destroy();
+			timeline_clear();
 			timeline = timeline.manager.timeline();
 			target.update = UpdateFlag.Direction;
+			return true;
         }
 		else if (next1 == SpriteType.Stairs) {
 			setStairsStatus(player, dir);
+			return true;
 		}
 		else {
 			if (getMapTile(player, dir, 0) == SpriteType.Stairs) {
 				setStairsStatus(player, dir);
+				return true;
 			}
 			else {
 				updateTween(player, dir, Options.walk_duration);
@@ -450,32 +485,78 @@ export default function createPlayerMovementSystem(tweens: Phaser.Tweens.TweenMa
 				switch (dir) {
 					case Direction.Left:
 						Player.status[player] = PlayerStatus.Walk_L;
-						break;
+						return true;
 					case Direction.Right:
 						Player.status[player] = PlayerStatus.Walk_R;
-						break;
+						return true;
 					case Direction.Up:
 						Player.status[player] = PlayerStatus.Walk_U;
-						break;
+						return true;
 					case Direction.Down:
 						Player.status[player] = PlayerStatus.Walk_D;
-						break;
+						return true;
 					case Direction.None:
 						Player.status[player] = PlayerStatus.Idle;
-						break;
+						return false;
                 }
             }
         }
 	}
 
+	function processInput(world: IWorld, player: number) {
+		const dir = Input.direction[player];
+		switch (dir) {
+			case Direction.Left:
+			case Direction.Right:
+			case Direction.Up:
+			case Direction.Down:
+				if (moveTo(world, player, dir)) {
+					switch (dir) {
+						case Direction.Left:
+							s = s + ", 0";
+							break;
+						case Direction.Right:
+							s = s + ", 1";
+							break;
+						case Direction.Up:
+							s = s + ", 2";
+							break;
+						case Direction.Down:
+							s = s + ", 3";
+							break;
+					}
+					if (map_info.completed) {
+						console.log(s);
+					}
+				}
+				break;
+			default:
+				if (target.dt > Options.rest_timeout) {
+					Player.status[player] = PlayerStatus.Rest;
+				}
+				else if (target.dt > Options.idle_timeout) {
+					Player.status[player] = PlayerStatus.Idle;
+				}
+				else {
+					//Player.status[player] = PlayerStatus.None;
+				}
+				target.status = Player.status[player];
+		}
+		Input.direction[player] = Direction.None;
+    }
+
 	function fillMap(world: IWorld) {
 		map.clear();
+		map_info.completed = true;
+		map_info.box_money = -1;
+		map_info.box_type = SpriteType.None;
+
 		const tiles = touchableQuery(world);
-		for (let i = 0; i < tiles.length; i++) {
-			const tile = tiles[i];
+		tiles.forEach(tile => {
 			const col = Math.round(Position.x[tile]);
 			const row = Math.round(Position.y[tile]);
-			switch (Sprite.type[tile]) {
+			const tile_type = Sprite.type[tile];
+			switch (tile_type) {
 				case SpriteType.Wall:
 				case SpriteType.Stone:
 					map.set(col, row, SpriteType.Wall);
@@ -483,7 +564,14 @@ export default function createPlayerMovementSystem(tweens: Phaser.Tweens.TweenMa
 				case SpriteType.BoxNormal:
 				case SpriteType.BoxPlaced:
 				case SpriteType.BoxMoney:
+				case SpriteType.BoxOpen:
+				case SpriteType.BoxTake:
+				case SpriteType.BoxEmpty:
 					map.set(col, row, SpriteType.BoxNormal);
+					map.setTag(col, row, tile);
+					break;
+				case SpriteType.BoxOpened:
+					map.set(col, row, SpriteType.BoxOpened);
 					map.setTag(col, row, tile);
 					break;
 				case SpriteType.DoorClosed:
@@ -492,13 +580,27 @@ export default function createPlayerMovementSystem(tweens: Phaser.Tweens.TweenMa
 				case SpriteType.Stairs:
 					map.set(col, row, SpriteType.Stairs);
 					break;
-            }
-		}
-    }
+			}
+			switch (tile_type) {
+				case SpriteType.BoxNormal:
+					map_info.completed = false;
+					break;
+				case SpriteType.BoxMoney:
+				case SpriteType.BoxOpen:
+				case SpriteType.BoxOpened:
+				case SpriteType.BoxTake:
+				case SpriteType.BoxEmpty:
+					map_info.box_money = tile;
+					map_info.box_type = tile_type;
+					break;
+			}
+		});
+	}
+
 	let s = "";
 	return defineSystem((world) => {
 		playerEnterDemoQuery(world).forEach(player => {
-			timeline.destroy();
+			timeline_clear();
 			timeline = tweens.timeline();
 			target.update = UpdateFlag.None;
 			Input.direction[player] = Direction.None;
@@ -515,12 +617,23 @@ export default function createPlayerMovementSystem(tweens: Phaser.Tweens.TweenMa
 			if ((target.update & UpdateFlag.Status) == UpdateFlag.Status) {
 				Player.status[player] = target.status;
 				Player.duration[player] = target.duration;
+
+				if (target.status == PlayerStatus.Hidden) {
+					Sprite.type[map_info.box_money] = SpriteType.BoxTake;
+				}
+				if (target.status == PlayerStatus.WithMoney) {
+					Sprite.type[map_info.box_money] = SpriteType.BoxEmpty;
+				}
+
 				target.update &= ~UpdateFlag.Status;
+			}
+			else {
+				Player.status[player] = PlayerStatus.None;
 			}
 
 			if ((target.update & UpdateFlag.Direction) == UpdateFlag.Direction) {
-				target.update &= ~UpdateFlag.Direction;
 				Input.direction[player] = target.dir;
+				target.update &= ~UpdateFlag.Direction;
 			}
 
 			if (timeline.isPlaying()) {
@@ -528,42 +641,50 @@ export default function createPlayerMovementSystem(tweens: Phaser.Tweens.TweenMa
 			}
 			else {
 				target.dt += Options.time_delta;
-				const dir = Input.direction[player];
-				switch (dir) {
-					case Direction.Left:
-					case Direction.Right:
-					case Direction.Up:
-					case Direction.Down:
-						switch (dir) {
-							case Direction.Left:
-								s = s + ", 0";
-								break;
-							case Direction.Right:
-								s = s + ", 1";
-								break;
-							case Direction.Up:
-								s = s + ", 2";
-								break;
-							case Direction.Down:
-								s = s + ", 3";
-								break;
-						}
-						console.log(s);
-						moveTo(world, player, dir);
-						break;
-					default:
-						if (target.dt > Options.rest_timeout) {
-							Player.status[player] = PlayerStatus.Rest;
-						}
-						else if (target.dt > Options.idle_timeout) {
-							Player.status[player] = PlayerStatus.Idle;
-						}
-						else {
-							Player.status[player] = PlayerStatus.None;
-						}
-						target.status = Player.status[player];
+
+				if (!hasComponent(world, PlayDemo, player) && map_info.completed) {
+					if (map_info.box_type == SpriteType.BoxMoney) {
+						Sprite.type[map_info.box_money] = SpriteType.BoxOpen;
+						timeline_clear();
+						timeline.add({
+							targets: target,
+							i: 0,
+							duration: Options.walk_duration,
+							repeat: 0
+						});
+						timeline.add({
+							targets: target,
+							i: 0,
+							duration: Options.box_open,
+							repeat: 0
+						});
+						timeline.play();
+						Player.status[player] = PlayerStatus.Idle;
+					}
+					else if (map_info.box_type == SpriteType.BoxOpen) {
+						Sprite.type[map_info.box_money] = SpriteType.BoxOpened;
+						Player.status[player] = PlayerStatus.Applause;
+						Player.duration[player] = Options.applause_duration;
+						timeline_clear();
+						timeline.add({
+							targets: target,
+							i: 0,
+							duration: Options.applause_duration,
+							repeat: 0,
+							onComplete: function () {
+								target.status = PlayerStatus.Smile;
+								target.update = UpdateFlag.Status;
+							}
+						});
+						timeline.play();
+                    }
+					else {
+						processInput(world, player);
+                    }
 				}
-				Input.direction[player] = Direction.None;
+				else {
+					processInput(world, player);
+				}
 			}
         });
 	

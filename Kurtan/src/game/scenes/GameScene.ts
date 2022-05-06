@@ -143,7 +143,6 @@ export default class GameScene extends Phaser.Scene {
 
         this.levelLoaderSystem(this.world);
 
-        // run each system in desired order
         this.playerControllerSystem(this.world);
 
         this.entityMovementSystem(this.world);

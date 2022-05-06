@@ -10,9 +10,14 @@ export enum SpriteType {
 	Wall,
 	Stone,
 	BoxPlace,
+
 	BoxNormal,
 	BoxPlaced,
 	BoxMoney,
+	BoxOpen,
+	BoxOpened,
+	BoxTake,
+	BoxEmpty,
 
 	DoorClosed,
 
