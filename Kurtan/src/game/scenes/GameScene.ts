@@ -80,11 +80,11 @@ export default class GameScene extends Phaser.Scene {
         this.game.events.on(Phaser.Core.Events.BLUR, this.onBlur, this);
         this.game.events.on(Phaser.Core.Events.FOCUS, this.onFocus, this);
 
-        this.position_x = this.add.text(10, 320, "test");
-        this.position_x.depth = 100;
+        this.position_x = this.add.text(10, 322, "test");
+        this.position_x.depth = 110;
 
-        this.position_y = this.add.text(100, 320, "test");
-        this.position_y.depth = 100;
+        this.position_y = this.add.text(100, 322, "test");
+        this.position_y.depth = 110;
     }
 
     onBlur() {

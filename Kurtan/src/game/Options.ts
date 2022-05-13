@@ -1,4 +1,7 @@
 const Options = {
+    map_width: 25,
+    map_height: 16,
+
     tile_width: 24,
     tile_height: 20,
     time: 0,

@@ -628,7 +628,9 @@ export default function createPlayerMovementSystem(tweens: Phaser.Tweens.TweenMa
 				target.update &= ~UpdateFlag.Status;
 			}
 			else {
-				Player.status[player] = PlayerStatus.None;
+				if (!timeline.isPlaying()) {
+					Player.status[player] = PlayerStatus.None;
+                }
 			}
 
 			if ((target.update & UpdateFlag.Direction) == UpdateFlag.Direction) {

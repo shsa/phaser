@@ -71,6 +71,7 @@ export default function createPlayerViewSystem(scene: GameScene) {
 
 			const status = Player.status[id];
 			const duration = Player.duration[id];
+			console.log(status);
 			switch (status) {
 				case PlayerStatus.None:
 					//sprite.anims.stop();

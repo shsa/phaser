@@ -20,6 +20,19 @@ export class LevelMap {
 	}
 
 	public set(col: number, row: number, value: SpriteType) {
+		if (col < 0) {
+			return;
+		}
+		if (row < 0) {
+			return;
+		}
+		if (col >= this.width) {
+			return;
+		}
+		if (row >= this.height) {
+			return;
+		}
+
 		this.background[row * this.width + col] = value;
 	}
 

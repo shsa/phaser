@@ -70,12 +70,10 @@ export default function createLevelLoaderSystem() {
 	}
 
 	function clear(world: IWorld, query: Query<IWorld>) {
-		const entities = query(world);
-		for (let i = 0; i < entities.length; i++) {
-			const id = entities[i];
+		query(world).forEach(id => {
 			addComponent(world, Destroy, id);
 			removeComponent(world, Touchable, id);
-        }
+        });
     }
 
 	function loadMap(level: any): LevelMap {
@@ -221,6 +219,26 @@ export default function createLevelLoaderSystem() {
 				}
 			}
 		}
+
+		const width = map.width + 1;
+		for (let row = 0; row <= map.height; row++) {
+			for (let col = 0; col <= width; col++) {
+				if (row >= 0 && row < map.height) {
+					if (col >= 0 && col < map.width) {
+						continue;
+					}
+				}
+
+				const tile = addEntity(world);
+				addComponent(world, Position, tile);
+				addComponent(world, Sprite, tile);
+				addComponent(world, Tile, tile);
+				Position.x[tile] = col;
+				Position.y[tile] = row;
+				Sprite.type[tile] = SpriteType.BackgroundUI;
+			}
+		}
+
 		removeComponent(world, Level, game);
 
 		playerQuery(world).forEach(player => {

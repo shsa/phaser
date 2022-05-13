@@ -4,6 +4,7 @@ import {
 	defineQuery,
 	enterQuery,
 	exitQuery,
+    hasComponent,
 } from 'bitecs';
 
 import Tile from '@/game/components/Tile';
@@ -20,9 +21,9 @@ export default function createTileViewSystem(scene: Phaser.Scene) {
 	
 	const spriteQueryEnter = enterQuery(spriteQuery);
 
-	function addTile(key: string): Phaser.GameObjects.Sprite {
+	function addTile(key: string, depth = 0): Phaser.GameObjects.Sprite {
 		const result = scene.add.sprite(0, 0, key);
-		result.setDepth(0);
+		result.setDepth(depth);
 		return result;
     }
 
@@ -36,6 +37,8 @@ export default function createTileViewSystem(scene: Phaser.Scene) {
 				return addTile("place");
 			case SpriteType.Space:
 				return addTile("space");
+			case SpriteType.BackgroundUI:
+				return addTile("space", 100);
 			case SpriteType.Error:
 				return addTile("error");
 			default:
@@ -47,8 +50,10 @@ export default function createTileViewSystem(scene: Phaser.Scene) {
 		spriteQueryEnter(world).forEach(id => {
 			const sprite = addSprite(Sprite.type[id]);
 			spritesById.set(id, sprite);
-			sprite.x = Options.game_offset_x + Position.x[id] * Options.tile_width;
-			sprite.y = Options.game_offset_y + Position.y[id] * Options.tile_height;
+			const x = Position.x[id];
+			const y = Position.y[id];
+			sprite.x = Options.game_offset_x + x * Options.tile_width;
+			sprite.y = Options.game_offset_y + y * Options.tile_height;
         })
 
 		destroyQuery(world).forEach(id => {

@@ -11,6 +11,8 @@ export enum SpriteType {
 	Stone,
 	BoxPlace,
 
+	BackgroundUI,
+
 	BoxNormal,
 	BoxPlaced,
 	BoxMoney,
