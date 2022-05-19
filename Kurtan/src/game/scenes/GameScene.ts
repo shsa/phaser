@@ -62,21 +62,21 @@ export default class GameScene extends Phaser.Scene {
     }
 
     preload() {
-        this.load.image('wall', '/assets/wall.png');
-        this.load.image('space', '/assets/space.png');
-        this.load.image('stone', '/assets/stone.png');
-        this.load.image('place', '/assets/place.png');
-        this.load.image('secret', '/assets/secret.png');
-        this.load.image('stairs', '/assets/stairs.png');
-        this.load.image('error', '/assets/error.png');
+        this.load.image('wall', 'assets/wall.png');
+        this.load.image('space', 'assets/space.png');
+        this.load.image('stone', 'assets/stone.png');
+        this.load.image('place', 'assets/place.png');
+        this.load.image('secret', 'assets/secret.png');
+        this.load.image('stairs', 'assets/stairs.png');
+        this.load.image('error', 'assets/error.png');
 
-        this.load.spritesheet("player", "/assets/player.png", { frameWidth: Options.tile_width, frameHeight: Options.tile_height, spacing: 1 });
-        this.load.animation("playerAnimations", "/assets/player.json");
+        this.load.spritesheet("player", "assets/player.png", { frameWidth: Options.tile_width, frameHeight: Options.tile_height, spacing: 1 });
+        this.load.animation("playerAnimations", "assets/player.json");
 
-        this.load.spritesheet("box", "/assets/box.png", { frameWidth: Options.tile_width, frameHeight: Options.tile_height, spacing: 1 });
-        this.load.animation("boxAnimations", "/assets/box.json");
+        this.load.spritesheet("box", "assets/box.png", { frameWidth: Options.tile_width, frameHeight: Options.tile_height, spacing: 1 });
+        this.load.animation("boxAnimations", "assets/box.json");
 
-        this.load.spritesheet("door", "/assets/door.png", { frameWidth: Options.tile_width, frameHeight: Options.tile_height, spacing: 1 });
+        this.load.spritesheet("door", "assets/door.png", { frameWidth: Options.tile_width, frameHeight: Options.tile_height, spacing: 1 });
         this.game.events.on(Phaser.Core.Events.BLUR, this.onBlur, this);
         this.game.events.on(Phaser.Core.Events.FOCUS, this.onFocus, this);
 

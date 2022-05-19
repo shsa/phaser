@@ -1,4 +1,7 @@
 {
+  "ts-node": {
+    "require": [ "tsconfig-paths/register" ]
+  },
   "compilerOptions": {
     "target": "es5",
     "module": "esnext",
@@ -12,15 +15,15 @@
     "forceConsistentCasingInFileNames": true,
     "useDefineForClassFields": true,
     "sourceMap": true,
-    "baseUrl": ".",
+    "baseUrl": "./src/",
     "types": [
       "webpack-env"
     ],
     "paths": {
-      "@/*": [
-        "src/*"
-      ],
-      "@scenes": [ "src/game/scenes" ],
+      "@/*": [ "*" ],
+      "@scenes/*": [ "game/scenes/*" ],
+      "components/*": [ "game/components/*" ],
+      "systems/*": [ "game/systems/*" ]
     },
     "lib": [
       "esnext",
