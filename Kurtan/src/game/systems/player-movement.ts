@@ -20,6 +20,7 @@ import Position from '@/game/components/Position';
 import Input, { Direction, getOffset } from '@/game/components/Input';
 import { addTween } from '@/game/helper';
 import { LevelMap } from '@/game/data/LevelMap'
+import Apple from '../components/Apple';
 
 enum UpdateFlag {
 	None = 0,
@@ -34,6 +35,7 @@ export default function createPlayerMovementSystem(tweens: Phaser.Tweens.TweenMa
 	const playerDemoQuery = defineQuery([Player, PlayDemo])
 	const playerEnterDemoQuery = enterQuery(playerDemoQuery);
 	const touchableQuery = defineQuery([Touchable, Position]);
+	const appleQuery = defineQuery([Apple]);
 
 	const target = {
 		i: 0,
@@ -503,8 +505,15 @@ export default function createPlayerMovementSystem(tweens: Phaser.Tweens.TweenMa
         }
 	}
 
-	function processInput(world: IWorld, player: number) {
+	function processInput(world: IWorld, player: number): void {
 		const dir = Input.direction[player];
+		const x = Position.x[player];
+		const y = Position.y[player];
+		const entityType = map.getEntity(x, y);
+		if (entityType == SpriteType.Apple) {
+			console.log("ts");
+		}
+
 		switch (dir) {
 			case Direction.Left:
 			case Direction.Right:
@@ -579,6 +588,9 @@ export default function createPlayerMovementSystem(tweens: Phaser.Tweens.TweenMa
 					break;
 				case SpriteType.Stairs:
 					map.set(col, row, SpriteType.Stairs);
+					break;
+				case SpriteType.Apple:
+					map.set(col, row, SpriteType.Apple);
 					break;
 			}
 			switch (tile_type) {

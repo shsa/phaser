@@ -26,48 +26,14 @@ import BoxPlace from '@/game/components/BoxPlace';
 import Box from '@/game/components/Box';
 import PlayDemo from '@/game/components/PlayDemo'
 import Destroy from '@/game/components/Destroy'
+import Visible from '../components/Visible';
+import Apple from '../components/Apple';
 
 export default function createLevelLoaderSystem() {
 	const gameQuery = defineQuery([Game]);
 	const playerQuery = defineQuery([Player, Position, Level]);
 	const tileQuery = defineQuery([Tile, Sprite]);
 	const entityQuery = defineQuery([Entity, Sprite]);
-
-	function isTouchable(spriteType: SpriteType): boolean {
-		switch (spriteType) {
-			case SpriteType.BoxNormal:
-			case SpriteType.BoxPlaced:
-			case SpriteType.BoxMoney:
-			case SpriteType.Wall:
-			case SpriteType.DoorClosed:
-			case SpriteType.Stairs:
-				return true;
-			default:
-				return false;
-        }
-    }
-
-	function setTouchable(world: IWorld, map: LevelMap, col: number, row: number, id: number) {
-		if (isTouchable(map.get(col, row))) {
-			addComponent(world, Touchable, id);
-			return;
-		}
-		if (isTouchable(map.getEntity(col, row))) {
-			addComponent(world, Touchable, id);
-			return;
-        }
-    }
-
-	function isBox(spriteType: SpriteType): boolean {
-		switch (spriteType) {
-			case SpriteType.BoxNormal:
-			case SpriteType.BoxPlaced:
-			case SpriteType.BoxMoney:
-				return true;
-			default:
-				return false;
-		}
-	}
 
 	function clear(world: IWorld, query: Query<IWorld>) {
 		query(world).forEach(id => {
@@ -119,6 +85,10 @@ export default function createLevelLoaderSystem() {
 						map.set(col, row, SpriteType.Space);
 						map.setEntity(col, row, SpriteType.Stairs);
 						break;
+					case 'A':
+						map.set(col, row, SpriteType.Space);
+						map.setEntity(col, row, SpriteType.AppleHidden);
+						break;
 					default:
 						map.set(col, row, SpriteType.Error);
 						break;
@@ -168,55 +138,69 @@ export default function createLevelLoaderSystem() {
 				addComponent(world, Tile, tile);
 				Position.x[tile] = col;
 				Position.y[tile] = row;
-				Sprite.type[tile] = map.get(col, row);
-				setTouchable(world, map, col, row, tile);
-
-				if (map.get(col, row) == SpriteType.BoxPlace) {
-					addComponent(world, BoxPlace, tile);
-				}
-
-				switch (map.getEntity(col, row)) {
-					case SpriteType.None:
+				const spriteType = map.get(col, row);
+				Sprite.type[tile] = spriteType;
+				switch (spriteType) {
+					case SpriteType.Wall:
+						addComponent(world, Touchable, tile);
 						break;
-					default:
-						{
-							const entity = addEntity(world);
-							addComponent(world, Position, entity);
-							addComponent(world, Sprite, entity);
-							addComponent(world, Entity, entity);
-							Position.x[entity] = col;
-							Position.y[entity] = row;
-							const type = map.getEntity(col, row);
-							Sprite.type[entity] = type;
-
-							switch (map.getEntity(col, row)) {
-								case SpriteType.BoxNormal:
-								case SpriteType.BoxMoney:
-								case SpriteType.BoxPlaced:
-									{
-										addComponent(world, Box, entity);
-										Box.money[entity] = map.getEntity(col, row) == SpriteType.BoxNormal ? 0 : 1;
-										if (map.get(col, row) == SpriteType.BoxPlace) {
-											if (Box.money[entity] == 1) {
-												Sprite.type[entity] = SpriteType.BoxMoney;
-											} else {
-												Sprite.type[entity] = SpriteType.BoxPlaced;
-											}
-										} else {
-											Sprite.type[entity] = SpriteType.BoxNormal;
-										}
-										setTouchable(world, map, col, row, entity);
-										break;
-									}
-								case SpriteType.DoorClosed:
-									setTouchable(world, map, col, row, entity);
-									break;
-								case SpriteType.Stairs:
-									setTouchable(world, map, col, row, entity);
-									break;
-                            }
-						}
+					case SpriteType.BoxPlace:
+						addComponent(world, BoxPlace, tile);
+						break;
 				}
+			}
+		}
+
+		for (let i = 0; i < map.entities.length; i++) {
+			const item = map.entities[i];
+
+			const col = item.x;
+			const row = item.y;
+			switch (item.type) {
+				case SpriteType.None:
+					break;
+				default:
+					{
+						const entity = addEntity(world);
+						addComponent(world, Position, entity);
+						addComponent(world, Sprite, entity);
+						addComponent(world, Entity, entity);
+						addComponent(world, Visible, entity);
+						Position.x[entity] = item.x;
+						Position.y[entity] = item.y;
+						Sprite.type[entity] = item.type;
+
+						switch (item.type) {
+							case SpriteType.BoxNormal:
+							case SpriteType.BoxMoney:
+							case SpriteType.BoxPlaced:
+								{
+									addComponent(world, Box, entity);
+									Box.money[entity] = item.type == SpriteType.BoxNormal ? 0 : 1;
+									if (map.get(col, row) == SpriteType.BoxPlace) {
+										if (Box.money[entity] == 1) {
+											Sprite.type[entity] = SpriteType.BoxMoney;
+										} else {
+											Sprite.type[entity] = SpriteType.BoxPlaced;
+										}
+									} else {
+										Sprite.type[entity] = SpriteType.BoxNormal;
+									}
+									addComponent(world, Touchable, entity);
+									break;
+								}
+							case SpriteType.DoorClosed:
+								addComponent(world, Touchable, entity);
+								break;
+							case SpriteType.Stairs:
+								addComponent(world, Touchable, entity);
+								break;
+							case SpriteType.Apple:
+								removeComponent(world, Visible, entity);
+								addComponent(world, Apple, entity);
+								break;
+						}
+					}
 			}
 		}
 

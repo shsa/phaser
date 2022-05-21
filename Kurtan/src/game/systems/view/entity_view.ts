@@ -3,13 +3,16 @@ import {
 	defineSystem,
 	defineQuery,
 	enterQuery,
-	exitQuery
+	exitQuery,
+	hasComponent,
+	IWorld
 } from 'bitecs';
 
 import Entity from '@/game/components/Entity';
 import Position from '@/game/components/Position';
 import Sprite, { SpriteType } from '@/game/components/Sprite';
 import Options from '@/game/Options';
+import Visible from '@/game/components/Visible';
 
 export default function createEntityViewSystem(scene: Phaser.Scene) {
 	const spritesById = new Map<number, Phaser.GameObjects.Sprite>();
@@ -37,6 +40,10 @@ export default function createEntityViewSystem(scene: Phaser.Scene) {
 				return addEntity("secret");
 			case SpriteType.Stairs:
 				return addEntity("stairs");
+			case SpriteType.AppleHidden:
+			case SpriteType.AppleDestroy:
+			case SpriteType.Apple:
+				return addEntity("apple");
 			default:
 				return addEntity("error");
 		}
@@ -59,7 +66,7 @@ export default function createEntityViewSystem(scene: Phaser.Scene) {
 		}
 	}
 
-	function updateEntity(entity: number) {
+	function updateEntity(world: IWorld, entity: number) {
 		const sprite = spritesById.get(entity);
 		if (!sprite) {
 			// log an error
@@ -84,32 +91,34 @@ export default function createEntityViewSystem(scene: Phaser.Scene) {
 				return play(sprite, "box_opened");
 			case SpriteType.BoxTake:
 				return play(sprite, "box_take");
+			case SpriteType.Apple:
+				return play(sprite, "visible");
+			case SpriteType.AppleHidden:
+				return play(sprite, "hidden");
+			case SpriteType.AppleDestroy:
+				return play(sprite, "destroy");
 		}
+
+		sprite.visible = hasComponent(world, Visible, entity);
     }
 
 	return defineSystem((world) => {
-		const entitiesEntered = spriteQueryEnter(world);
-
-		for (let i = 0; i < entitiesEntered.length; ++i) {
-			const id = entitiesEntered[i];
+		spriteQueryEnter(world).forEach(id => {
 			const sprite = addSprite(Sprite.type[id]);
 			if (sprite) {
 				spritesById.set(id, sprite);
             }
-		}
+		});
 
-		const entities = spriteQuery(world);
-		for (let i = 0; i < entities.length; ++i) {
-			updateEntity(entities[i]);
-		}
+		spriteQuery(world).forEach(id => {
+			updateEntity(world, id);
+		})
 
-		const entitiesExited = spriteQueryExit(world);
-		for (let i = 0; i < entitiesExited.length; ++i) {
-			const id = entitiesExited[i];
+		spriteQueryExit(world).forEach(id => {
 			const sprite = spritesById.get(id);
 			sprite?.destroy();
 			spritesById.delete(id);
-		}
+		});
 
 		return world;
 	});

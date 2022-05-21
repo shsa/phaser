@@ -41,7 +41,10 @@ export enum PlayerStatus {
 
     Applause,
     Smile,
-    WithMoney
+    WithMoney,
+
+    Feeding,
+    WellFed
 }
 
 export function getDirection(status: PlayerStatus): Direction {

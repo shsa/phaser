@@ -2,9 +2,12 @@ import * as Phaser from "phaser";
 import GameScene from "@/game/scenes/GameScene";
 
 const gameConfig: Phaser.Types.Core.GameConfig = {
-    title: "Sample",
+    title: "Kurtan",
 
     type: Phaser.AUTO,
+    pixelArt: false,
+
+    banner: false,
 
     scale: {
         //    width: window.innerWidth,

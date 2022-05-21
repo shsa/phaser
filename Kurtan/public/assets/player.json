@@ -695,7 +695,7 @@
       "frames": [
         {
           "key": "player",
-          "frame": 17,
+          "frame": 53,
           "duration": 100
         }
       ],
@@ -713,7 +713,48 @@
         }
       ],
       "repeat": 0
+    },
+
+    {
+      "key": "well-fed",
+      "type": "frame",
+      "frames": [
+        {
+          "key": "player",
+          "frame": 17,
+          "duration": 100
+        }
+      ],
+      "repeat": 0
+    },
+
+    {
+      "key": "feeding",
+      "type": "frame",
+      "frames": [
+        {
+          "key": "player",
+          "frame": 12,
+          "duration": 100
+        },
+        {
+          "key": "player",
+          "frame": 46,
+          "duration": 100
+        },
+        {
+          "key": "player",
+          "frame": 47,
+          "duration": 100
+        },
+        {
+          "key": "player",
+          "frame": 46,
+          "duration": 100
+        }
+      ],
+      "repeat": -1
     }
-],
+  ],
   "globalTimeScale": 1
 }

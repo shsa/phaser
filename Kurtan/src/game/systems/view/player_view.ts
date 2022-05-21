@@ -71,7 +71,6 @@ export default function createPlayerViewSystem(scene: GameScene) {
 
 			const status = Player.status[id];
 			const duration = Player.duration[id];
-			console.log(status);
 			switch (status) {
 				case PlayerStatus.None:
 					//sprite.anims.stop();
@@ -153,6 +152,12 @@ export default function createPlayerViewSystem(scene: GameScene) {
 					break;
 				case PlayerStatus.WithMoney:
 					play(sprite, "with_money");
+					break;
+				case PlayerStatus.Feeding:
+					play(sprite, "feeding");
+					break;
+				case PlayerStatus.WellFed:
+					play(sprite, "well-fed");
 					break;
 			}
 

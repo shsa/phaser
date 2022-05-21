@@ -1,5 +1,12 @@
 import Sprite, { SpriteType } from '@/game/components/Sprite';
 
+class Entity {
+	public x!: number;
+	public y!: number;
+	public type!: SpriteType;
+	public tag!: number;
+}
+
 export class LevelMap {
 	public get width() {
 		return 25;
@@ -10,12 +17,13 @@ export class LevelMap {
 	}
 
 	private background: SpriteType[] = new Array(this.height * this.width);
-	private entities: SpriteType[] = new Array(this.height * this.width);
+	private entities1: SpriteType[] = new Array(this.height * this.width);
+	public entities: Entity[] = new Array();
 	private tags: number[] = new Array(this.height * this.width);
 
 	public clear() {
 		this.background.fill(SpriteType.Space);
-		this.entities.fill(SpriteType.None);
+		this.entities1.fill(SpriteType.None);
 		this.tags.fill(0);
 	}
 
@@ -57,8 +65,14 @@ export class LevelMap {
 		return value;
 	}
 
-	public setEntity(col: number, row: number, value: SpriteType) {
-		this.entities[row * this.width + col] = value;
+	public setEntity(col: number, row: number, value: SpriteType, tag: number = 0) {
+		this.entities1[row * this.width + col] = value;
+		const entity = new Entity();
+		entity.x = col;
+		entity.y = row;
+		entity.type = value;
+		entity.tag = tag;
+		this.entities.push(entity);
 	}
 
 	public getEntity(col: number, row: number): SpriteType {
@@ -75,7 +89,7 @@ export class LevelMap {
 			return SpriteType.None;
 		}
 
-		const value = this.entities[row * this.width + col];
+		const value = this.entities1[row * this.width + col];
 		if (value === undefined) {
 			return SpriteType.None;
 		}

@@ -76,6 +76,9 @@ export default class GameScene extends Phaser.Scene {
         this.load.spritesheet("box", "assets/box.png", { frameWidth: Options.tile_width, frameHeight: Options.tile_height, spacing: 1 });
         this.load.animation("boxAnimations", "assets/box.json");
 
+        this.load.spritesheet("apple", "assets/apple.png", { frameWidth: Options.tile_width, frameHeight: Options.tile_height, spacing: 1 });
+        this.load.animation("appleAnimations", "assets/apple.json");
+
         this.load.spritesheet("door", "assets/door.png", { frameWidth: Options.tile_width, frameHeight: Options.tile_height, spacing: 1 });
         this.game.events.on(Phaser.Core.Events.BLUR, this.onBlur, this);
         this.game.events.on(Phaser.Core.Events.FOCUS, this.onFocus, this);

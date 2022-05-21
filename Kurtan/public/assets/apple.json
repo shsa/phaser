@@ -1,0 +1,91 @@
+{
+  "anims": [
+    {
+      "key": "visible",
+      "type": "frame",
+      "frames": [
+        {
+          "key": "apple",
+          "frame": 0,
+          "duration": 100
+        }
+      ],
+
+      "repeat": -1
+    },
+
+    {
+      "key": "destroy",
+      "type": "frame",
+      "frames": [
+        {
+          "key": "apple",
+          "frame": 1,
+          "duration": 100
+        },
+        {
+          "key": "apple",
+          "frame": 2,
+          "duration": 100
+        },
+        {
+          "key": "apple",
+          "frame": 3,
+          "duration": 100
+        },
+        {
+          "key": "apple",
+          "frame": 4,
+          "duration": 100
+        },
+        {
+          "key": "apple",
+          "frame": 5,
+          "duration": 100
+        },
+        {
+          "key": "apple",
+          "frame": 6,
+          "duration": 100
+        },
+        {
+          "key": "apple",
+          "frame": 7,
+          "duration": 100
+        },
+        {
+          "key": "apple",
+          "frame": 8,
+          "duration": 100
+        },
+        {
+          "key": "apple",
+          "frame": 9,
+          "duration": 100
+        },
+        {
+          "key": "apple",
+          "frame": 10,
+          "duration": 100
+        }
+      ],
+
+      "repeat": 0
+    },
+
+    {
+      "key": "hidden",
+      "type": "frame",
+      "frames": [
+        {
+          "key": "apple",
+          "frame": 11,
+          "duration": 100
+        }
+      ],
+
+      "repeat": -1
+    }
+  ],
+  "globalTimeScale": 1
+}
