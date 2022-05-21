@@ -754,6 +754,24 @@
         }
       ],
       "repeat": -1
+    },
+
+    {
+      "key": "fear",
+      "type": "frame",
+      "frames": [
+        {
+          "key": "player",
+          "frame": 51,
+          "duration": 100
+        },
+        {
+          "key": "player",
+          "frame": 52,
+          "duration": 100
+        }
+      ],
+      "repeat": 3
     }
   ],
   "globalTimeScale": 1

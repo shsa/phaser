@@ -5,7 +5,8 @@ import {
 	enterQuery,
 	IWorld,
 	hasComponent,
-	addComponent
+	addComponent,
+	removeComponent
 } from 'bitecs';
 
 import Options from '@/game/Options';
@@ -22,6 +23,8 @@ import { addTween } from '@/game/helper';
 import { LevelMap } from '@/game/data/LevelMap'
 import Apple from '@/game/components/Apple';
 import LostApple from '@/game/components/LostApple';
+import Message from '@/game/components/Message';
+import MessageType from '@/game/data/Messages';
 
 enum UpdateFlag {
 	None = 0,
@@ -522,6 +525,25 @@ export default function createPlayerMovementSystem(tweens: Phaser.Tweens.TweenMa
 		const x = Position.x[player];
 		const y = Position.y[player];
 
+		if (hasComponent(world, LostApple, player)) {
+			removeComponent(world, LostApple, player);
+			timeline_clear();
+			timeline.add({
+				targets: target,
+				i: 0,
+				duration: Options.fear_duration,
+				onComplete: function () {
+					target.status = PlayerStatus.Idle;
+					target.update = UpdateFlag.Status;
+                }
+			});
+			timeline.play();
+			Player.status[player] = PlayerStatus.Fear;
+			Player.duration[player] = Options.fear_duration;
+			Message.type[player] = MessageType.LostPresent;
+			return;
+		}
+
 		appleQuery(world).forEach(apple => {
 			const apple_x = Position.x[apple];
 			const apple_y = Position.y[apple];
@@ -544,6 +566,7 @@ export default function createPlayerMovementSystem(tweens: Phaser.Tweens.TweenMa
 			case Direction.Right:
 			case Direction.Up:
 			case Direction.Down:
+				Message.type[player] = MessageType.None;
 				if (moveTo(world, player, dir)) {
 					switch (dir) {
 						case Direction.Left:

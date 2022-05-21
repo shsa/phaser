@@ -159,6 +159,9 @@ export default function createPlayerViewSystem(scene: GameScene) {
 				case PlayerStatus.WellFed:
 					play(sprite, "well-fed");
 					break;
+				case PlayerStatus.Fear:
+					play(sprite, "fear");
+					break;
 			}
 
 			sprite.x = Options.game_offset_x + Position.x[id] * Options.tile_width;

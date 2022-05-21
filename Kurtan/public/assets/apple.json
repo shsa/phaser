@@ -67,6 +67,11 @@
           "key": "apple",
           "frame": 10,
           "duration": 100
+        },
+        {
+          "key": "apple",
+          "frame": 11,
+          "duration": 10000
         }
       ],
 

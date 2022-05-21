@@ -19,6 +19,7 @@ import Input from '@/game/components/Input';
 import Position from '@/game/components/Position';
 import Sprite from '@/game/components/Sprite';
 import Level from '@/game/components/Level';
+import Message from '@/game/components/Message';
 
 import createLevelLoaderSystem from '@/game/systems/level-loader';
 import createPlayerControllerSystem from '@/game/systems/player-controller';
@@ -32,6 +33,8 @@ import createEntityViewSystem from '@/game/systems/view/entity_view';
 import createPlayerViewSystem from '@/game/systems/view/player_view';
 
 import createCleanupSystem from '@/game/systems/cleanup';
+import createMessageViewSystem from "@/game/systems/view/message_view";
+import createAppleSystem from "../systems/apple_system";
 
 export default class GameScene extends Phaser.Scene {
 
@@ -43,7 +46,10 @@ export default class GameScene extends Phaser.Scene {
     private playerMovementSystem!: System;
     private entityMovementSystem!: System;
     private demoSystem!: System;
+    private appleSystem!: System;
 
+
+    private messageViewSystem!: System;
     private tileViewSystem!: System;
     private entityViewSystem!: System;
     private playerViewSystem!: System;
@@ -143,7 +149,7 @@ export default class GameScene extends Phaser.Scene {
     }
 
     create() {
-        this.showMessage("Ваш приз пропал навсегда!");
+        //this.showMessage("Ваш приз пропал навсегда!");
 
         const { width, height } = this.scale;
         this.world = createWorld();
@@ -155,6 +161,7 @@ export default class GameScene extends Phaser.Scene {
         addComponent(this.world, Level, player_id);
         addComponent(this.world, Position, player_id);
         addComponent(this.world, Input, player_id);
+        addComponent(this.world, Message, player_id);
 
         Player.status[player_id] = PlayerStatus.Start;
 
@@ -169,10 +176,12 @@ export default class GameScene extends Phaser.Scene {
         this.playerMovementSystem = createPlayerMovementSystem(this.tweens);
         this.entityMovementSystem = createEntityMovementSystem(this.tweens);
         this.demoSystem = createDemoSystem(this.tweens, this.anims);
+        this.appleSystem = createAppleSystem(this.tweens);
 
         this.tileViewSystem = createTileViewSystem(this);
         this.entityViewSystem = createEntityViewSystem(this);
         this.playerViewSystem = createPlayerViewSystem(this);
+        this.messageViewSystem = createMessageViewSystem(this);
 
         this.cleanupSystem = createCleanupSystem();
         //    this.tweens.timeScale = 0.2;
@@ -187,11 +196,14 @@ export default class GameScene extends Phaser.Scene {
 
         this.levelLoaderSystem(this.world);
 
+        this.appleSystem(this.world);
         this.playerControllerSystem(this.world);
 
         this.entityMovementSystem(this.world);
         this.playerMovementSystem(this.world);
 
+
+        this.messageViewSystem(this.world);
         this.tileViewSystem(this.world);
         this.playerViewSystem(this.world);
         this.entityViewSystem(this.world);
