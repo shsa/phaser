@@ -1,4 +1,5 @@
 import * as Phaser from "phaser";
+import { Plugin as NineSlicePlugin } from 'phaser3-nineslice';
 import GameScene from "@/game/scenes/GameScene";
 
 const gameConfig: Phaser.Types.Core.GameConfig = {
@@ -30,6 +31,10 @@ const gameConfig: Phaser.Types.Core.GameConfig = {
 
     parent: "game",
     backgroundColor: "#8080F0",
+
+    plugins: {
+        global: [NineSlicePlugin.DefaultCfg],
+    },
 
     scene: [GameScene]
 };
