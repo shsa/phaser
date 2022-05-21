@@ -20,7 +20,8 @@ import Position from '@/game/components/Position';
 import Input, { Direction, getOffset } from '@/game/components/Input';
 import { addTween } from '@/game/helper';
 import { LevelMap } from '@/game/data/LevelMap'
-import Apple from '../components/Apple';
+import Apple from '@/game/components/Apple';
+import LostApple from '@/game/components/LostApple';
 
 enum UpdateFlag {
 	None = 0,
@@ -405,7 +406,14 @@ export default function createPlayerMovementSystem(tweens: Phaser.Tweens.TweenMa
 			return false;
 		}
 		else if (next1 == SpriteType.BoxNormal) {
-			if (getMapTile(player, dir, 2) == SpriteType.Space) {
+			let next2 = getMapTile(player, dir, 2);
+			if (next2 == SpriteType.Apple) {
+				next2 = SpriteType.Space;
+				const apple = getMapTag(player, dir, 2);
+				Sprite.type[apple] = SpriteType.AppleDestroy;
+				addComponent(world, LostApple, player);
+			}
+			if (next2 == SpriteType.Space) {
 				updateTween(player, dir, Options.walk_duration);
 				const tile = getMapTag(player, dir, 1);
 				if (!hasComponent(world, Input, tile)) {
@@ -505,14 +513,31 @@ export default function createPlayerMovementSystem(tweens: Phaser.Tweens.TweenMa
         }
 	}
 
+	function lenSqr(x: number, y: number): number {
+		return x * x + y * y;
+	}
+
 	function processInput(world: IWorld, player: number): void {
 		const dir = Input.direction[player];
 		const x = Position.x[player];
 		const y = Position.y[player];
-		const entityType = map.getEntity(x, y);
-		if (entityType == SpriteType.Apple) {
-			console.log("ts");
-		}
+
+		appleQuery(world).forEach(apple => {
+			const apple_x = Position.x[apple];
+			const apple_y = Position.y[apple];
+			if (apple_x == x && apple_y == y) {
+				if (Sprite.type[apple] == SpriteType.AppleHidden) {
+					Sprite.type[apple] = SpriteType.AppleWait;
+				}
+			}
+
+			if (Sprite.type[apple] == SpriteType.AppleWait) {
+				if (lenSqr(apple_x - x, apple_y - y) > 1) {
+					Sprite.type[apple] = SpriteType.Apple;
+					addComponent(world, Touchable, apple);
+				}
+			}
+		});
 
 		switch (dir) {
 			case Direction.Left:
@@ -560,12 +585,11 @@ export default function createPlayerMovementSystem(tweens: Phaser.Tweens.TweenMa
 		map_info.box_money = -1;
 		map_info.box_type = SpriteType.None;
 
-		const tiles = touchableQuery(world);
-		tiles.forEach(tile => {
+		touchableQuery(world).forEach(tile => {
 			const col = Math.round(Position.x[tile]);
 			const row = Math.round(Position.y[tile]);
-			const tile_type = Sprite.type[tile];
-			switch (tile_type) {
+			const type = Sprite.type[tile];
+			switch (type) {
 				case SpriteType.Wall:
 				case SpriteType.Stone:
 					map.set(col, row, SpriteType.Wall);
@@ -591,9 +615,10 @@ export default function createPlayerMovementSystem(tweens: Phaser.Tweens.TweenMa
 					break;
 				case SpriteType.Apple:
 					map.set(col, row, SpriteType.Apple);
+					map.setTag(col, row, tile);
 					break;
 			}
-			switch (tile_type) {
+			switch (type) {
 				case SpriteType.BoxNormal:
 					map_info.completed = false;
 					break;
@@ -603,7 +628,7 @@ export default function createPlayerMovementSystem(tweens: Phaser.Tweens.TweenMa
 				case SpriteType.BoxTake:
 				case SpriteType.BoxEmpty:
 					map_info.box_money = tile;
-					map_info.box_type = tile_type;
+					map_info.box_type = type;
 					break;
 			}
 		});

@@ -22,9 +22,9 @@ export default function createEntityViewSystem(scene: Phaser.Scene) {
 	const spriteQueryEnter = enterQuery(spriteQuery);
 	const spriteQueryExit = exitQuery(spriteQuery);
 
-	function addEntity(key: string): Phaser.GameObjects.Sprite {
+	function addEntity(key: string, depth: number = 5): Phaser.GameObjects.Sprite {
 		const result = scene.add.sprite(0, 0, key);
-		result.setDepth(5);
+		result.setDepth(depth);
 		return result;
 	}
 
@@ -41,9 +41,10 @@ export default function createEntityViewSystem(scene: Phaser.Scene) {
 			case SpriteType.Stairs:
 				return addEntity("stairs");
 			case SpriteType.AppleHidden:
+			case SpriteType.AppleWait:
 			case SpriteType.AppleDestroy:
 			case SpriteType.Apple:
-				return addEntity("apple");
+				return addEntity("apple", 1);
 			default:
 				return addEntity("error");
 		}
@@ -94,6 +95,7 @@ export default function createEntityViewSystem(scene: Phaser.Scene) {
 			case SpriteType.Apple:
 				return play(sprite, "visible");
 			case SpriteType.AppleHidden:
+			case SpriteType.AppleWait:
 				return play(sprite, "hidden");
 			case SpriteType.AppleDestroy:
 				return play(sprite, "destroy");

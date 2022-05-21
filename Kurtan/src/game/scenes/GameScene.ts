@@ -53,6 +53,9 @@ export default class GameScene extends Phaser.Scene {
     public position_x!: Phaser.GameObjects.Text;
     public position_y!: Phaser.GameObjects.Text;
 
+    public message_text!: Phaser.GameObjects.Text;
+    public message_frame!: Phaser.GameObjects.RenderTexture;
+
     constructor() {
         super("game");
     }
@@ -88,22 +91,60 @@ export default class GameScene extends Phaser.Scene {
 
         this.position_y = this.add.text(100, 322, "test");
         this.position_y.depth = 110;
+
+        this.load.image("message", "assets/message.png");
     }
 
     onBlur() {
-    //    Object.keys(this.cursors).forEach(key => {
-    //        const value = Reflect.get(this.cursors, key);
-    //        if (value instanceof Phaser.Input.Keyboard.Key) {
-    //            value.isDown = false;
-    //        }
-    //    });
+        //    Object.keys(this.cursors).forEach(key => {
+        //        const value = Reflect.get(this.cursors, key);
+        //        if (value instanceof Phaser.Input.Keyboard.Key) {
+        //            value.isDown = false;
+        //        }
+        //    });
     }
 
     onFocus() {
 
     }
 
+    showMessage(text: string) {
+        if (this.message_frame == undefined) {
+            this.message_text = this.add.text(320, 170, "");
+            this.message_text.setDepth(2000);
+            this.message_text.setOrigin(0.5);
+            this.message_text.setColor("#55FEFE");
+            this.message_text.setShadow(2, 2, "#0000A9");
+
+            this.message_frame = this.add.nineslice(
+                0, 0,   // this is the starting x/y location
+                16, 16,   // the width and height of your object
+                'message', // a key to an already loaded image
+                4,         // the width and height to offset for a corner slice
+                4          // (optional) pixels to offset when computing the safe usage area
+            );
+            this.message_frame.setDepth(1000);
+            this.message_frame.setOrigin(0.5);
+            this.message_frame.setPosition(320, 170);
+        }
+        this.message_text.setText(text);
+        const r = this.message_text.getBounds();
+        this.message_frame.resize(r.width + 20, r.height + 14);
+
+        this.message_text.visible = true;
+        this.message_frame.visible = true;
+    }
+
+    hideMessage() {
+        if (this.message_frame != undefined) {
+            this.message_text.visible = false;
+            this.message_frame.visible = false;
+        }
+    }
+
     create() {
+        this.showMessage("Ваш приз пропал навсегда!");
+
         const { width, height } = this.scale;
         this.world = createWorld();
 
@@ -134,8 +175,8 @@ export default class GameScene extends Phaser.Scene {
         this.playerViewSystem = createPlayerViewSystem(this);
 
         this.cleanupSystem = createCleanupSystem();
-    //    this.tweens.timeScale = 0.2;
-    //    this.anims.globalTimeScale = 0.2
+        //    this.tweens.timeScale = 0.2;
+        //    this.anims.globalTimeScale = 0.2
     }
 
     update(t: number, dt: number) {

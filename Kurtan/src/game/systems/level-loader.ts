@@ -196,6 +196,10 @@ export default function createLevelLoaderSystem() {
 								addComponent(world, Touchable, entity);
 								break;
 							case SpriteType.Apple:
+								addComponent(world, Apple, entity);
+								break;
+							case SpriteType.AppleWait:
+							case SpriteType.AppleHidden:
 								removeComponent(world, Visible, entity);
 								addComponent(world, Apple, entity);
 								break;

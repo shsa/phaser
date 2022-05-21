@@ -24,6 +24,7 @@ export enum SpriteType {
 	DoorClosed,
 
 	AppleHidden,
+	AppleWait,
 	Apple,
 	AppleDestroy,
 

@@ -4,7 +4,6 @@ class Entity {
 	public x!: number;
 	public y!: number;
 	public type!: SpriteType;
-	public tag!: number;
 }
 
 export class LevelMap {
@@ -16,15 +15,15 @@ export class LevelMap {
 		return 16;
 	}
 
-	private background: SpriteType[] = new Array(this.height * this.width);
-	private entities1: SpriteType[] = new Array(this.height * this.width);
+	private background: Map<number, SpriteType> = new Map();
+	private _entities: Map<number, SpriteType> = new Map();
 	public entities: Entity[] = new Array();
-	private tags: number[] = new Array(this.height * this.width);
+	private tags: Map<number, number> = new Map();
 
 	public clear() {
-		this.background.fill(SpriteType.Space);
-		this.entities1.fill(SpriteType.None);
-		this.tags.fill(0);
+		this.background.clear();
+		this._entities.clear();
+		this.tags.clear();
 	}
 
 	public set(col: number, row: number, value: SpriteType) {
@@ -41,7 +40,7 @@ export class LevelMap {
 			return;
 		}
 
-		this.background[row * this.width + col] = value;
+		this.background.set(row * this.width + col, value);
 	}
 
 	public get(col: number, row: number): SpriteType {
@@ -58,20 +57,19 @@ export class LevelMap {
 			return SpriteType.Out;
 		}
 
-		const value = this.background[row * this.width + col];
+		const value = this.background.get(row * this.width + col);
 		if (value === undefined) {
 			return SpriteType.Space;
 		}
 		return value;
 	}
 
-	public setEntity(col: number, row: number, value: SpriteType, tag: number = 0) {
-		this.entities1[row * this.width + col] = value;
+	public setEntity(col: number, row: number, value: SpriteType) {
+		this._entities.set(row * this.width + col, value);
 		const entity = new Entity();
 		entity.x = col;
 		entity.y = row;
 		entity.type = value;
-		entity.tag = tag;
 		this.entities.push(entity);
 	}
 
@@ -89,7 +87,7 @@ export class LevelMap {
 			return SpriteType.None;
 		}
 
-		const value = this.entities1[row * this.width + col];
+		const value = this._entities.get(row * this.width + col);
 		if (value === undefined) {
 			return SpriteType.None;
 		}
@@ -97,11 +95,11 @@ export class LevelMap {
 	}
 
 	public setTag(col: number, row: number, value: number) {
-		this.tags[row * this.width + col] = value;
+		this.tags.set(row * this.width + col, value);
 	}
 
 	public getTag(col: number, row: number): number {
-		return this.tags[row * this.width + col];
+		return this.tags.get(row * this.width + col) || 0;
 	}
 
 	public isWall(col: number, row: number): boolean {
